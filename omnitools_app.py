@@ -274,10 +274,10 @@ if tool_selection == "Typing Speed Test":
             st.session_state.test_active = False
             st.rerun()
 # =======================================================
-# ----------------- 3. PASSWORD MANAGER -----------------
+# ----------------- 3. FILE ORGNISER -----------------
 # =======================================================
-elif tool_selection == "Password Manager":
-    st.title("🔒 Password Manager")
+elif tool_selection == "File Orgniser":
+    st.title("File Orgniser")
     st.write(
         "This is a placeholder for your Capstone project! You can build the logic here.")
     st.info("Status: Under Construction")
