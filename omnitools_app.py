@@ -22,8 +22,16 @@ if tool_selection == "Typing Speed Test":
 
     letters = list(string.ascii_lowercase + string.digits +
                    "!@#$%^&*()_+-=[]{}|;':,.<>/?`~ ")
-    words = ["apple", "banana", "table", "chair", "mountain", "river", "ocean", "space", "rocket", "planet", "orbit", "galaxy", "universe", "telescope", "computer", "keyboard", "mouse", "screen", "window", "door",
-             "house", "building", "street", "city", "country", "world", "globe", "map", "compass", "north", "south", "east", "west", "up", "down", "left", "right", "front", "back", "top", "bottom", "inside", "outside", "near", "far", "close", "open", "shut", "lock", "key", "safe", "danger", "fast", "slow", "quick", "speedy", "rapid", "swift", "sudden", "abrupt", "gradual", "steady", "constant", "changing", "dynamic", "static", "still", "quiet", "loud", "noisy", "silent", "peaceful", "calm", "chaotic", "messy", "neat", "tidy", "clean", "dirty", "filthy", "spotless", "bright", "dark", "light", "heavy", "soft", "hard", "rough", "smooth", "sharp", "dull", "blunt", "pointed", "round", "square", "flat", "curved", "straight", "bent", "broken"]
+    words = ["apple", "banana", "table", "chair", "mountain", "river", "ocean", "space", "rocket",
+             "planet", "orbit", "galaxy", "universe", "telescope", "computer", "keyboard", "mouse",
+             "screen", "window", "door", "house", "building", "street", "city", "country", "world",
+             "globe", "map", "compass", "north", "south", "east", "west", "up", "down", "left", "right",
+             "front", "back", "top", "bottom", "inside", "outside", "near", "far", "close", "open", "shut",
+             "lock", "key", "safe", "danger", "fast", "slow", "quick", "speedy", "rapid", "swift", "sudden",
+             "abrupt", "gradual", "steady", "constant", "changing", "dynamic", "static", "still", "quiet",
+             "loud", "noisy", "silent", "peaceful", "calm", "chaotic", "messy", "neat", "tidy", "clean", "dirty",
+             "filthy", "spotless", "bright", "dark", "light", "heavy", "soft", "hard", "rough", "smooth", "sharp",
+             "dull", "blunt", "pointed", "round", "square", "flat", "curved", "straight", "bent", "broken"]
     sentences = [
         "The quick brown fox jumps over the lazy dog.",
         "Pack my box with five dozen liquor jugs.",
