@@ -278,8 +278,7 @@ if tool_selection == "Typing Speed Test":
 # =======================================================
 elif tool_selection == "File Orgniser":
     st.title("File Orgniser")
-    st.write(
-        "This is a placeholder for your Capstone project! You can build the logic here.")
+    st.write("Orgnise you files in a single click!")
     st.info("Status: Under Construction")
 # =======================================================
 # ----------------- 4. PDF CONVERTER --------------------
