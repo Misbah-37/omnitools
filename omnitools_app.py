@@ -8,7 +8,7 @@ st.set_page_config(page_title="OmniTools", page_icon="🛠️", layout="wide")
 st.sidebar.title("🛠️ OmniTools")
 st.sidebar.write("Welcome to your ultimate utility suite.")
 tool_selection = st.sidebar.radio(
-    "Select a Tool:", ["Typing Speed Test", "Password Manager", "PDF Converter"])
+    "Select a Tool:", ["Typing Speed Test", "File Orgniser", "PDF Converter"])
 # =======================================================
 # ----------------- 2. TYPING SPEED TEST ----------------
 # =======================================================
