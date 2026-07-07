@@ -56,7 +56,7 @@ if tool_selection == "Typing Speed Test":
         "We promptly judged antique ivory buckles for the next prize.",
         "A mad boxer shot a quick, gloved jab to the jaw of his dizzy opponent.",
         "Jaded zombies acted quaintly but kept driving their oxen forward.",
-        "A quivering Texas zombie fought republicans with javelins.",M
+        "A quivering Texas zombie fought republicans with javelins.",
         "Just keep examining every low bid quoted for zinc etchings.",
         "Crazy Fredericka bought many very exquisite opal jewels.",
         "Sixty zippers were quickly picked from the woven jute bag.",
