@@ -54,7 +54,7 @@ if tool_selection == "Typing Speed Test":
     ]
     # 2. Difficulty Selection
     difficulty = st.radio("Choose Difficulty:", [
-                          "1. Easy (30 Letters)", "2. Medium (10 Words)", "3. Hard (5 Sentences)"])
+                          "1. Easy (30 Letters)", "2. Medium (15 Words)", "3. Hard (10 Sentences)"])
     if 'test_active' not in st.session_state:
         st.session_state.test_active = False
 
