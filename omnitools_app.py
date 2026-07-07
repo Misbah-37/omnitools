@@ -8,7 +8,7 @@ st.set_page_config(page_title="OmniTools", page_icon="🛠️", layout="wide")
 st.sidebar.title("🛠️ OmniTools")
 st.sidebar.write("Welcome to your ultimate utility suite.")
 tool_selection = st.sidebar.radio(
-    "Select a Tool:", ["Typing Speed Test", "File Orgniser", "PDF Converter"])
+    "Select a Tool:", ["Typing Speed Test", "File Organiser", "PDF Converter"])
 # =======================================================
 # ----------------- 2. TYPING SPEED TEST ----------------
 # =======================================================
@@ -274,11 +274,11 @@ if tool_selection == "Typing Speed Test":
             st.session_state.test_active = False
             st.rerun()
 # =======================================================
-# ----------------- 3. FILE ORGNISER -----------------
+# ----------------- 3. FILE ORGANISER -----------------
 # =======================================================
-elif tool_selection == "File Orgniser":
-    st.title("File Orgniser")
-    st.write("Orgnise you files in a single click!")
+elif tool_selection == "File Organiser":
+    st.title("File Organiser")
+    st.write("Organise you files in a single click!")
     st.info("Status: Under Construction")
 # =======================================================
 # ----------------- 4. PDF CONVERTER --------------------
