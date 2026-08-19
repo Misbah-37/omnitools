@@ -131,7 +131,7 @@ if tool_selection == "Typing Speed Test":
             "1. Easy (30 Letters)", 
             "2. Medium (15 Words)", 
             "3. Hard (10 Sentences)", 
-            "4. Expert (1 Paragraph)"
+            "4. Expert (3 Paragraphs)"
         ]
     )
 
