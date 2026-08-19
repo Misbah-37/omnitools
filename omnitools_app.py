@@ -149,9 +149,9 @@ if tool_selection == "Typing Speed Test":
         elif "Hard" in difficulty:
             st.session_state.pool = sentences
             st.session_state.target_count = 10
-        else: # 4. Expert (1 Paragraph)
+        else: # 4. Expert (3 Paragraphs)
             st.session_state.pool = paragraphs
-            st.session_state.target_count = 1
+            st.session_state.target_count = 3
 
     if not st.session_state.test_active:
         st.button("Start Typing Test", on_click=start_test, type="primary")
