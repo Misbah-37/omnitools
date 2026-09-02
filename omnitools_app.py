@@ -535,7 +535,7 @@ elif tool_selection == "Photo Resizer":
 # =======================================================
 
 if os.path.exists("file_organizer_icon_1788371632367.jpg"):
-    st.image("file_organizer_icon_1788371632367.jpg", width=90
+    st.image("file_organizer_icon_1788371632367.jpg", width=90)
              
 elif tool_selection == "File Organiser":
     st.title("🗂️ Desktop File Organiser")
