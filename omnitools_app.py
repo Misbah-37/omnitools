@@ -512,7 +512,7 @@ elif tool_selection == "Photo Resizer":
 elif tool_selection == "File Organiser":
     if os.path.exists("file_organizer_icon_1788371632367.jpg"):
         st.image("file_organizer_icon_1788371632367.jpg", width=90)
-    st.title("Desktop File Organiser")
+    st.title("🗂️ Desktop File Organiser")
     st.write("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
     # Trust Badges Bar
     st.markdown("""
@@ -530,7 +530,7 @@ elif tool_selection == "File Organiser":
             <span style="font-size: 1.6rem;">🛡️</span>
             <div>
                 <div class="cert-title">OmniTools Verified Application Certificate</div>
-                <div style="font-size: 0.8rem; color: #166534; font-weight: 600;">Status: Certified Clean & Safe for Execution</div>
+                <div style="font-size: 0.8rem; color: #34d399; font-weight: 600;">Status: Certified Clean & Safe for Execution</div>
             </div>
         </div>
         <div class="cert-grid">
@@ -547,7 +547,6 @@ elif tool_selection == "File Organiser":
     with col1:
         st.subheader("⚡ Download & Quick Start")
         st.write("Because web browsers restrict direct file movement on user hard drives, this dedicated **Windows Desktop Utility** provides full native folder access safely.")
-        # Check if the zip file exists in the repository
         zip_filename = "File_Organizer.zip"
         if os.path.exists(zip_filename):
             with open(zip_filename, "rb") as f:
@@ -555,7 +554,7 @@ elif tool_selection == "File Organiser":
                     label="⬇️ Download File Organizer (.zip)",
                     data=f,
                     file_name="File_Organizer.zip",
-                    mime="application/vnd.microsoft.portable-executable",
+                    mime="application/zip",
                     type="primary"
                 )
         else:
@@ -566,17 +565,18 @@ elif tool_selection == "File Organiser":
                 disabled=True,
                 help="Upload File_Organizer.zip to your GitHub repo to activate."
             )
-        st.warning("""**First-time Windows Launch Note:**  
+        st.warning("""
+**First-time Windows Launch Note:**  
 If Windows SmartScreen shows a blue popup:  
-👉 Click **More info** ➔ Click **Run anyway**.
-*(This appears because the app is an independent open-source tool without a corporate certificate).*""")
+👉 Click **More info** ➔ Click **Run anyway**.  
+*(This appears because the app is an independent open-source tool without a corporate certificate).*
+""")
         st.markdown("""
         #### 📌 How to use:
-        1. **Download** `File_Organizer.zip` above.
-        2. **Extract** `File_Organizer.exe`.
-        3. **Launch the app** (Standalone executable — no setup or Python needed).
-        4. Click **Browse** to choose any target folder (e.g. `Downloads` or `Desktop`).
-        5. Click **Organize!** and watch your files get sorted into structured categories instantly.
+        1. **Download** `File_Organizer.zip` above and extract it.
+        2. **Double-click** `File_Organizer.exe` to launch (no install or Python required).
+        3. Click **Browse** and select any messy folder (e.g. `Downloads` or `Desktop`).
+        4. Click **Organize!** and watch your files get sorted instantly.
         """)
     with col2:
         st.subheader("✨ Key Features")
@@ -604,6 +604,7 @@ If Windows SmartScreen shows a blue popup:
         }
         for cat, exts in categories.items():
             st.write(f"**{cat}**: `{exts}`")
+
 
 
 # =======================================================
