@@ -499,31 +499,36 @@ elif tool_selection == "File Organiser":
     with col1:
         st.subheader("⚡ Download & Quick Start")
         st.write("Because web browsers restrict direct file movement on user hard drives, this dedicated **Windows Desktop Utility** provides full native folder access safely.")
-        # Check if the exe file exists in the repository
-        exe_filename = "File_Organizer.exe"
-        if os.path.exists(exe_filename):
-            with open(exe_filename, "rb") as f:
+        # Check if the zip file exists in the repository
+        exe_filename = "File_Organizer.zip"
+        if os.path.exists(zip_filename):
+            with open(zip_filename, "rb") as f:
                 st.download_button(
-                    label="⬇️ Download File Organizer (.exe)",
+                    label="⬇️ Download File Organizer (.zip)",
                     data=f,
-                    file_name="File_Organizer.exe",
+                    file_name="File_Organizer.zip",
                     mime="application/vnd.microsoft.portable-executable",
                     type="primary"
                 )
         else:
-            st.info("💡 Place `File_Organizer.exe` in your GitHub repository root to activate the download button.")
+            st.info("💡 Place `File_Organizer.zip` in your GitHub repository root to activate the download button.")
             st.download_button(
-                label="⬇️ Download File Organizer (.exe)",
+                label="⬇️ Download File Organizer (.zip)",
                 data=b"",
                 disabled=True,
-                help="Upload File_Organizer.exe to your GitHub repo to activate."
+                help="Upload File_Organizer.zip to your GitHub repo to activate."
             )
+        st.warning("""**First-time Windows Launch Note:**  
+If Windows SmartScreen shows a blue popup:  
+👉 Click **More info** ➔ Click **Run anyway**.
+*(This appears because the app is an independent open-source tool without a corporate certificate).*""")
         st.markdown("""
         #### 📌 How to use:
-        1. **Download** `File_Organizer.exe` above.
-        2. **Launch the app** (Standalone executable — no setup or Python needed).
-        3. Click **Browse** to choose any target folder (e.g. `Downloads` or `Desktop`).
-        4. Click **Organize!** and watch your files get sorted into structured categories instantly.
+        1. **Download** `File_Organizer.zip` above.
+        2. ** Extact the .exe file"
+        3. **Launch the app** (Standalone executable — no setup or Python needed).
+        4. Click **Browse** to choose any target folder (e.g. `Downloads` or `Desktop`).
+        5. Click **Organize!** and watch your files get sorted into structured categories instantly.
         """)
     with col2:
         st.subheader("✨ Key Features")
