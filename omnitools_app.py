@@ -11,10 +11,10 @@ import streamlit.components.v1 as components
 
 # ----------------- 1. OMNITOOLS CONFIG -----------------
 st.set_page_config(page_title="OmniTools", page_icon="🛠️", layout="wide")
-
-# Custom CSS for Trust Badges & UI
+# Custom Dark Mode & Glassmorphism CSS
 st.markdown("""
 <style>
+    /* Dark Theme Trust Badges */
     .trust-badge-container {
         display: flex;
         flex-wrap: wrap;
@@ -22,9 +22,9 @@ st.markdown("""
         margin: 15px 0 25px 0;
     }
     .trust-badge {
-        background: #f0fdf4;
-        border: 1px solid #86efac;
-        color: #166534;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        color: #34d399;
         padding: 6px 14px;
         border-radius: 20px;
         font-size: 0.85rem;
@@ -32,14 +32,16 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 6px;
+        backdrop-filter: blur(8px);
     }
+    /* Dark Theme Security Certificate */
     .cert-box {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        border: 1.5px solid #cbd5e1;
-        border-left: 6px solid #10b981;
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+        border: 1px solid #374151;
+        border-left: 5px solid #10b981;
         border-radius: 12px;
         padding: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         margin-bottom: 25px;
     }
     .cert-header {
@@ -51,7 +53,7 @@ st.markdown("""
     .cert-title {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #0f172a;
+        color: #f9fafb;
         margin: 0;
     }
     .cert-grid {
@@ -59,17 +61,19 @@ st.markdown("""
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 12px;
         font-size: 0.85rem;
-        color: #475569;
+        color: #9ca3af;
         margin-top: 10px;
-        background: #f1f5f9;
-        padding: 12px;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        padding: 14px;
         border-radius: 8px;
     }
     .cert-grid strong {
-        color: #1e293b;
+        color: #e2e8f0;
     }
 </style>
 """, unsafe_allow_html=True)
+
 # ----------------- SIDEBAR BRANDING -----------------
 # 1. Master Logo in the sidebar
 if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
