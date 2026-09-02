@@ -525,7 +525,7 @@ If Windows SmartScreen shows a blue popup:
         st.markdown("""
         #### 📌 How to use:
         1. **Download** `File_Organizer.zip` above.
-        2. ** Extact the .exe file"
+        2. **Extract** `File_Organizer.exe`.
         3. **Launch the app** (Standalone executable — no setup or Python needed).
         4. Click **Browse** to choose any target folder (e.g. `Downloads` or `Desktop`).
         5. Click **Organize!** and watch your files get sorted into structured categories instantly.
