@@ -89,7 +89,7 @@ tool_selection = st.sidebar.radio(
 
 if tool_selection == "Typing Speed Test":
     if os.path.exists("typing_speed_icon_1788371582708.jpg"):
-    st.image("typing_speed_icon_1788371582708.jpg", width=90)
+        st.image("typing_speed_icon_1788371582708.jpg", width=90)
     st.title("⌨️ Typing Speed Test")
     st.write("Test your typing speed and accuracy in real-time.")
 
@@ -350,7 +350,7 @@ if tool_selection == "Typing Speed Test":
     
 elif tool_selection == "Photo Resizer":
     if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
-    st.image("photo_resizer_icon_1788371609489.jpg", width=90)
+        st.image("photo_resizer_icon_1788371609489.jpg", width=90)
     st.title("🖼️ Exam Photo Resizer & Cropper")
     st.write("Crop, resize to specific pixel dimensions, and compress within exact KB constraints.")
     photo_resizer_html = """
@@ -540,7 +540,7 @@ elif tool_selection == "Photo Resizer":
              
 elif tool_selection == "File Organiser":
     if os.path.exists("file_organizer_icon_1788371632367.jpg"):
-    st.image("file_organizer_icon_1788371632367.jpg", width=90)
+        st.image("file_organizer_icon_1788371632367.jpg", width=90)
     st.title("🗂️ Desktop File Organiser")
     st.write("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
     # Trust Badges Bar
