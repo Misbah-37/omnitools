@@ -12,6 +12,10 @@ import streamlit.components.v1 as components
 # ----------------- 1. OMNITOOLS CONFIG -----------------
 st.set_page_config(page_title="OmniTools", page_icon="🛠️", layout="wide")
 
+# Display Master Logo at the top of the sidebar
+if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
+    st.sidebar.image("omnitools_master_logo_1788371563646.jpg", use_container_width=True)
+
 # Permanent navigation sidebar
 st.sidebar.title("🛠️ OmniTools")
 st.sidebar.write("Welcome to your ultimate utility suite.")
