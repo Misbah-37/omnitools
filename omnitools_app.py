@@ -94,7 +94,7 @@ tool_selection = st.sidebar.radio(
 if tool_selection == "Typing Speed Test":
     if os.path.exists("typing_speed_icon_1788371582708.jpg"):
         st.image("typing_speed_icon_1788371582708.jpg", width=90)
-    st.title("⌨️ Typing Speed Test")
+    st.title("Typing Speed Test")
     st.write("Test your typing speed and accuracy in real-time.")
 
     # 1. The data pools
@@ -330,7 +330,7 @@ if tool_selection == "Typing Speed Test":
 elif tool_selection == "Photo Resizer":
     if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
         st.image("photo_resizer_icon_1788371609489.jpg", width=90)
-    st.title("🖼️ Exam Photo Resizer & Cropper")
+    st.title("Exam Photo Resizer & Cropper")
     st.write("Crop, resize to specific pixel dimensions, and compress within exact KB constraints.")
     photo_resizer_html = """
     <!DOCTYPE html>
@@ -615,6 +615,6 @@ If Windows SmartScreen shows a blue popup:
 else:
     if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
         st.image("pdf_converter_icon_1788371743841.jpg", width=90)
-    st.title("📄 PDF Converter")
+    st.title("PDF Converter")
     st.write("Merge, split, and convert your PDF files effortlessly.")
     st.info("Status: Under Construction")
