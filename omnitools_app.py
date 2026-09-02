@@ -26,6 +26,9 @@ tool_selection = st.sidebar.radio(
 # =======================================================
 # ----------------- 2. TYPING SPEED TEST ----------------
 # =======================================================
+if os.path.exists("typing_speed_icon_1788371582708.jpg"):
+    st.image("typing_speed_icon_1788371582708.jpg", width=90)
+
 if tool_selection == "Typing Speed Test":
     st.title("⌨️ Typing Speed Test")
     st.write("Test your typing speed and accuracy in real-time.")
@@ -282,6 +285,10 @@ if tool_selection == "Typing Speed Test":
 # =======================================================
 # ----------------- 3. PHOTO RESIZER --------------------
 # =======================================================
+
+if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
+    st.image("photo_resizer_icon_1788371609489.jpg", width=90)
+    
 elif tool_selection == "Photo Resizer":
     st.title("🖼️ Exam Photo Resizer & Cropper")
     st.write("Crop, resize to specific pixel dimensions, and compress within exact KB constraints.")
@@ -467,6 +474,10 @@ elif tool_selection == "Photo Resizer":
 # =======================================================
 # ----------------- 4. FILE ORGANISER -----------------
 # =======================================================
+
+if os.path.exists("file_organizer_icon_1788371632367.jpg"):
+    st.image("file_organizer_icon_1788371632367.jpg", width=90
+             
 elif tool_selection == "File Organiser":
     st.title("🗂️ Desktop File Organiser")
     st.write("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
@@ -565,6 +576,10 @@ If Windows SmartScreen shows a blue popup:
 # =======================================================
 # ----------------- 5. PDF CONVERTER --------------------
 # =======================================================
+
+if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
+        st.image("pdf_converter_icon_1788371743841.jpg", width=90)
+    
 else:
     st.title("📄 PDF Converter")
     st.write("Merge, split, and convert your PDF files effortlessly.")
