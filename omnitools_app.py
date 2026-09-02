@@ -363,31 +363,25 @@ elif tool_selection == "Photo Resizer":
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Cropper.js CSS -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
-        
         <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 1rem; }
-            .tool-container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 520px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: transparent; color: #f3f4f6; display: flex; justify-content: center; padding: 1rem; }
+            .tool-container { background: #111827; border: 1px solid #374151; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 520px; }
             .input-group { margin-bottom: 1rem; }
-            label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; color: #333; }
-            input[type="number"], input[type="file"] { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+            label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; color: #9ca3af; }
+            input[type="number"], input[type="file"] { width: 100%; padding: 0.6rem; background: #1f2937; color: #fff; border: 1px solid #374151; border-radius: 6px; box-sizing: border-box; }
             .dimension-row { display: flex; gap: 1rem; }
-            
-            .img-container { width: 100%; max-height: 400px; margin-bottom: 1rem; display: none; background-color: #eee; }
+            .img-container { width: 100%; max-height: 400px; margin-bottom: 1rem; display: none; background-color: #0f172a; border-radius: 8px; overflow: hidden; }
             img { display: block; max-width: 100%; }
-            
-            button { background-color: #007bff; color: white; border: none; padding: 0.75rem; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 1rem; transition: background 0.2s; }
-            button:hover { background-color: #0056b3; }
-            #downloadBtn { display: none; background-color: #28a745; text-align: center; text-decoration: none; padding: 0.75rem; border-radius: 6px; color: white; font-weight: bold; margin-top: 1rem; box-sizing: border-box; }
-            #downloadBtn:hover { background-color: #218838; }
-            #status { text-align: center; margin-top: 1rem; font-size: 0.95rem; font-weight: 600; color: #555; }
+            button { background: linear-gradient(135deg, #0284c7 0%, #00d2ff 100%); color: white; border: none; padding: 0.8rem; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+            button:hover { opacity: 0.9; }
+            #downloadBtn { display: none; background: #10b981; text-align: center; text-decoration: none; padding: 0.8rem; border-radius: 6px; color: white; font-weight: bold; margin-top: 1rem; display: block; }
+            #status { text-align: center; margin-top: 1rem; font-size: 0.95rem; font-weight: 600; color: #9ca3af; }
         </style>
     </head>
     <body>
     <div class="tool-container">
-        <h2 style="margin-top:0; text-align:center;">Exam Photo Tool</h2>
-        
+        <h2 style="margin-top:0; text-align:center; color:#fff;">Exam Photo Tool</h2>
         <div class="input-group">
             <label>Select Photo</label>
             <input type="file" id="imageInput" accept="image/png, image/jpeg, image/jpg">
@@ -416,7 +410,6 @@ elif tool_selection == "Photo Resizer":
             </div>
         </div>
         <button onclick="processAndCompress()" id="processBtn" style="display:none;">Crop & Compress Photo</button>
-        
         <div id="status"></div>
         <a id="downloadBtn" download="OmniTools_Ready.jpg">Download Resized Photo</a>
     </div>
@@ -458,8 +451,8 @@ elif tool_selection == "Photo Resizer":
             return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
         };
         function showSuccess(blob, statusEl, downloadBtn) {
-            statusEl.innerText = `Success! Final Size: ${(blob.size / 1024).toFixed(1)} KB`;
-            statusEl.style.color = "#28a745";
+            statusEl.innerText = `✅ Success! Final Size: ${(blob.size / 1024).toFixed(1)} KB`;
+            statusEl.style.color = "#34d399";
             const url = URL.createObjectURL(blob);
             downloadBtn.href = url;
             downloadBtn.style.display = "block";
@@ -477,7 +470,7 @@ elif tool_selection == "Photo Resizer":
                 return;
             }
             statusEl.innerText = "Calculating perfect compression...";
-            statusEl.style.color = "#555";
+            statusEl.style.color = "#94a3b8";
             downloadBtn.style.display = "none";
             const croppedCanvas = cropper.getCroppedCanvas();
             const finalCanvas = document.createElement('canvas');
@@ -490,7 +483,7 @@ elif tool_selection == "Photo Resizer":
             let blob = await getBlob(finalCanvas, 1.0);
             if (blob.size < minBytes) {
                 statusEl.innerText = `Error: Image is too small (${(blob.size/1024).toFixed(1)} KB) even at maximum quality. Upload a higher resolution photo.`;
-                statusEl.style.color = "#dc3545";
+                statusEl.style.color = "#f87171";
                 return;
             }
             if (blob.size <= maxBytes) {
@@ -499,12 +492,10 @@ elif tool_selection == "Photo Resizer":
             let minBlob = await getBlob(finalCanvas, 0.01);
             if (minBlob.size > maxBytes) {
                 statusEl.innerText = `Error: Cannot compress enough. Minimum possible size is ${(minBlob.size/1024).toFixed(1)} KB.`;
-                statusEl.style.color = "#dc3545";
+                statusEl.style.color = "#f87171";
                 return;
             }
-            let min_q = 0.01;
-            let max_q = 1.0;
-            let best_blob = null;
+            let min_q = 0.01, max_q = 1.0, best_blob = null;
             for (let i = 0; i < 15; i++) {
                 let q = (min_q + max_q) / 2;
                 blob = await getBlob(finalCanvas, q);
@@ -520,7 +511,7 @@ elif tool_selection == "Photo Resizer":
             }
             if (best_blob) {
                 statusEl.innerText = `Warning: Settled on closest safe size: ${(best_blob.size / 1024).toFixed(1)} KB`;
-                statusEl.style.color = "#ff9800";
+                statusEl.style.color = "#fbbf24";
                 const url = URL.createObjectURL(best_blob);
                 downloadBtn.href = url;
                 downloadBtn.style.display = "block";
@@ -531,6 +522,7 @@ elif tool_selection == "Photo Resizer":
     </html>
     """
     components.html(photo_resizer_html, height=800, scrolling=True)
+
 
 
 
