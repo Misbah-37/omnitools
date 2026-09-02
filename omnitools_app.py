@@ -143,7 +143,7 @@ if tool_selection == "🏠 Home":
                 st.image("photo_resizer_icon_1788371609489.jpg", width=75)
         with c2:
             st.markdown("### Photo Resizer")
-            st.caption("Interactive image cropper and binary-search compressor to hit exact pixel dimensions and strict KB file size constraints.")
+            st.caption("Image cropper and binary-search compressor to hit exact pixel dimensions and strict KB file size constraints.")
         if st.button("Launch Photo Resizer ➔", key="btn_photo", use_container_width=True):
             st.session_state.selected_tool = "Photo Resizer"
             st.rerun()
