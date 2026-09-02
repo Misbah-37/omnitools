@@ -3,6 +3,10 @@ import random
 import time
 import string
 import json
+import io
+import os
+import shutil
+import zipfile
 import streamlit.components.v1 as components
 
 # ----------------- 1. OMNITOOLS CONFIG -----------------
@@ -462,7 +466,95 @@ elif tool_selection == "Photo Resizer":
 elif tool_selection == "File Organiser":
     st.title("File Organiser")
     st.write("Organise your files in a single click!")
-    st.info("Status: Under Construction")
+    FILE_TYPES = {
+        "PDFs": [".pdf"],
+        "Word Documents": [".docx", ".doc"],
+        "Spreadsheets": [".xlsx", ".xls"],
+        "Presentations": [".pptx", ".ppt"],
+        "Images": [".jpg", ".jpeg", ".png", ".gif", ".JPG", ".webp"],
+        "Videos": [".mp4", ".avi", ".mov", ".mkv"],
+        "Audio": [".mp3", ".wav"],
+        "Archives": [".zip", ".rar", ".tar.gz", ".7z"],
+        "SQL": [".sql"],
+        "Executables": [".exe", ".msi"]
+    }
+    tab_local, tab_web = st.tabs(["💻 Local Folder (On Your Computer)", "☁️ Web Upload (ZIP Download)"])
+    # ---------------- TAB 1: LOCAL FOLDER ORGANISER ----------------
+    with tab_local:
+        st.subheader("Organize a Folder on your PC")
+        st.caption("Moves files directly inside your computer's folders (works when running Streamlit locally on your PC).")
+        folder_path = st.text_input(
+            "Enter Full Folder Path:", 
+            placeholder="e.g. E:/test  or  C:/Users/YourName/Downloads"
+        )
+        if folder_path:
+            clean_path = folder_path.strip().strip('"').strip("'")
+            if os.path.exists(clean_path) and os.path.isdir(clean_path):
+                all_items = os.listdir(clean_path)
+                # Only loose files (ignoring existing directories)
+                files_to_move = [f for f in all_items if os.path.isfile(os.path.join(clean_path, f))]
+                st.success(f"📁 Folder found! Contains **{len(files_to_move)}** unorganized file(s).")
+                if files_to_move:
+                    preview_data = []
+                    for f in files_to_move:
+                        _, ext = os.path.splitext(f)
+                        target = "Other (Uncategorized)"
+                        for folder_name, extensions in FILE_TYPES.items():
+                            if ext in extensions:
+                                target = folder_name
+                                break
+                        preview_data.append({"File Name": f, "Destination Folder": target})
+                    with st.expander("🔍 Preview Planned Movements", expanded=False):
+                        st.table(preview_data)
+                    if st.button("🚀 Organise Folder Now", type="primary"):
+                        moved_count = 0
+                        logs = []
+                        for file in files_to_move:
+                            old_path = os.path.join(clean_path, file)
+                            _, ext = os.path.splitext(file)
+                            for folder_name, extensions in FILE_TYPES.items():
+                                if ext in extensions:
+                                    new_folder = os.path.join(clean_path, folder_name)
+                                    os.makedirs(new_folder, exist_ok=True)
+                                    shutil.move(old_path, os.path.join(new_folder, file))
+                                    logs.append(f"✅ Moved `{file}` ➔ `{folder_name}/`")
+                                    moved_count += 1
+                                    break
+                        st.success(f"🎉 Success! Moved **{moved_count}** files into their respective folders.")
+                        with st.expander("📄 View Move Log", expanded=True):
+                            for log in logs:
+                                st.write(log)
+                else:
+                    st.info("No loose files to organize in this folder.")
+            else:
+                st.error("❌ Folder path not found or invalid. Please double check the path.")
+    # ---------------- TAB 2: WEB UPLOAD & ZIP DOWNLOAD ----------------
+    with tab_web:
+        st.subheader("Organize Uploaded Files into a ZIP")
+        uploaded_files = st.file_uploader(
+            "Upload files to organise",
+            accept_multiple_files=True,
+            help="Drag and drop multiple files to organize."
+        )
+        if uploaded_files:
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+                for f in uploaded_files:
+                    _, ext = os.path.splitext(f.name)
+                    dest_folder = "Other"
+                    for folder_name, extensions in FILE_TYPES.items():
+                        if ext in extensions:
+                            dest_folder = folder_name
+                            break
+                    zip_file.writestr(f"{dest_folder}/{f.name}", f.getvalue())
+            zip_buffer.seek(0)
+            st.download_button(
+                label="📦 Download Organised ZIP",
+                data=zip_buffer,
+                file_name="Organised_Files.zip",
+                mime="application/zip",
+                type="primary"
+            )
 
 # =======================================================
 # ----------------- 5. PDF CONVERTER --------------------
