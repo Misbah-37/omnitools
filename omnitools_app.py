@@ -71,44 +71,29 @@ st.markdown("""
     .cert-grid strong {
         color: #e2e8f0;
     }
-    /* Landing page feature card style */
-    .feature-card {
-        background: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 14px;
-        padding: 20px;
-        margin-bottom: 20px;
-        transition: transform 0.2s, border-color 0.2s;
-    }
-    .feature-card:hover {
-        border-color: #00d2ff;
-        transform: translateY(-2px);
-    }
 </style>
 """, unsafe_allow_html=True)
-# ----------------- NAVIGATION STATE -----------------
-tools = ["🏠 Home", "Typing Speed Test", "Photo Resizer", "File Organiser", "PDF Converter"]
-if "selected_tool" not in st.session_state:
-    st.session_state.selected_tool = "🏠 Home"
-def on_radio_change():
-    st.session_state.selected_tool = st.session_state.radio_nav
+# ----------------- PAGE ROUTER STATE -----------------
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "Home"
+def navigate_to(page_name):
+    st.session_state.current_page = page_name
+    st.rerun()
 # ----------------- SIDEBAR BRANDING -----------------
 if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
     st.sidebar.image("omnitools_master_logo_1788371563646.jpg", use_container_width=True)
 st.sidebar.title("🛠️ OmniTools")
 st.sidebar.caption("Your all-in-one productivity suite.")
-tool_selection = st.sidebar.radio(
-    "Navigation",
-    tools,
-    index=tools.index(st.session_state.selected_tool),
-    key="radio_nav",
-    on_change=on_radio_change
-)
+# Show Back to Home button in sidebar if inside a tool
+if st.session_state.current_page != "Home":
+    st.sidebar.divider()
+    if st.sidebar.button("🏠 Back to Dashboard", use_container_width=True):
+        navigate_to("Home")
 # =======================================================
 # ----------------- 0. LANDING PAGE (HOME) --------------
 # =======================================================
-if tool_selection == "🏠 Home":
-    st.title("Welcome to OmniTools 🌌")
+if st.session_state.current_page == "Home":
+    st.title("Explore the Suite 🌌")
     st.markdown("#### *High-performance, private, and lightweight utility tools for your daily workflows.*")
     
     st.markdown("""
@@ -120,7 +105,6 @@ if tool_selection == "🏠 Home":
     </div>
     """, unsafe_allow_html=True)
     st.divider()
-    st.subheader("🛠️ Explore the Suite")
     # 2x2 Grid of Tools
     row1_col1, row1_col2 = st.columns(2)
     # Card 1: Typing Test
@@ -131,10 +115,9 @@ if tool_selection == "🏠 Home":
                 st.image("typing_speed_icon_1788371582708.jpg", width=75)
         with c2:
             st.markdown("### Typing Speed Test")
-            st.caption("Measure your keystroke speed and accuracy in real-time across 4 difficulty levels including 30 curated paragraphs.")
+            st.caption("Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.")
         if st.button("Launch Typing Test ➔", key="btn_type", use_container_width=True):
-            st.session_state.selected_tool = "Typing Speed Test"
-            st.rerun()
+            navigate_to("Typing Speed Test")
     # Card 2: Photo Resizer
     with row1_col2:
         c1, c2 = st.columns([1, 4])
@@ -143,10 +126,9 @@ if tool_selection == "🏠 Home":
                 st.image("photo_resizer_icon_1788371609489.jpg", width=75)
         with c2:
             st.markdown("### Photo Resizer")
-            st.caption("Image cropper and binary-search compressor to hit exact pixel dimensions and strict KB file size constraints.")
+            st.caption("Interactive image cropper and binary-search compressor to hit exact pixel dimensions and strict KB limits.")
         if st.button("Launch Photo Resizer ➔", key="btn_photo", use_container_width=True):
-            st.session_state.selected_tool = "Photo Resizer"
-            st.rerun()
+            navigate_to("Photo Resizer")
     st.write("")
     row2_col1, row2_col2 = st.columns(2)
     # Card 3: File Organiser
@@ -157,10 +139,9 @@ if tool_selection == "🏠 Home":
                 st.image("file_organizer_icon_1788371632367.jpg", width=75)
         with c2:
             st.markdown("### Desktop File Organiser")
-            st.caption("Standalone verified Windows desktop utility to organize any messy folder on your computer in a single click.")
+            st.caption("Standalone verified Windows desktop utility to organize any messy folder on your PC in a single click.")
         if st.button("Get File Organiser ➔", key="btn_org", use_container_width=True):
-            st.session_state.selected_tool = "File Organiser"
-            st.rerun()
+            navigate_to("File Organiser")
     # Card 4: PDF Converter
     with row2_col2:
         c1, c2 = st.columns([1, 4])
@@ -171,16 +152,20 @@ if tool_selection == "🏠 Home":
             st.markdown("### PDF Converter Suite")
             st.caption("Merge, split, extract pages, and convert documents to and from PDF seamlessly.")
         if st.button("Open PDF Converter ➔", key="btn_pdf", use_container_width=True):
-            st.session_state.selected_tool = "PDF Converter"
-            st.rerun()
+            navigate_to("PDF Converter")
 # =======================================================
-# ----------------- 2. TYPING SPEED TEST ----------------
+# ----------------- 1. TYPING SPEED TEST ----------------
 # =======================================================
-elif tool_selection == "Typing Speed Test":
-    if os.path.exists("typing_speed_icon_1788371582708.jpg"):
-        st.image("typing_speed_icon_1788371582708.jpg", width=80)
-    st.title("Typing Speed Test")
-    st.write("Test your typing speed and accuracy in real-time.")
+elif st.session_state.current_page == "Typing Speed Test":
+    top_col1, top_col2 = st.columns([6, 1])
+    with top_col1:
+        if os.path.exists("typing_speed_icon_1788371582708.jpg"):
+            st.image("typing_speed_icon_1788371582708.jpg", width=80)
+        st.title("Typing Speed Test")
+        st.write("Test your typing speed and accuracy in real-time.")
+    with top_col2:
+        if st.button("🏠 Home", key="back_type"):
+            navigate_to("Home")
     letters = list(string.ascii_lowercase + string.digits + "!@#$%^&*()_+-=[]{}|;':,.<>/?`~ ")
     words = [
         "apple", "banana", "table", "chair", "mountain", "river", "ocean", "space", "rocket",
@@ -334,13 +319,18 @@ elif tool_selection == "Typing Speed Test":
             st.session_state.test_active = False
             st.rerun()
 # =======================================================
-# ----------------- 3. PHOTO RESIZER --------------------
+# ----------------- 2. PHOTO RESIZER --------------------
 # =======================================================
-elif tool_selection == "Photo Resizer":
-    if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
-        st.image("photo_resizer_icon_1788371609489.jpg", width=80)
-    st.title("Exam Photo Resizer & Cropper")
-    st.write("Crop, resize to specific pixel dimensions, and compress within exact KB constraints.")
+elif st.session_state.current_page == "Photo Resizer":
+    top_col1, top_col2 = st.columns([6, 1])
+    with top_col1:
+        if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
+            st.image("photo_resizer_icon_1788371609489.jpg", width=80)
+        st.title("Exam Photo Resizer & Cropper")
+        st.write("Crop, resize to specific pixel dimensions, and compress within exact KB constraints.")
+    with top_col2:
+        if st.button("🏠 Home", key="back_photo"):
+            navigate_to("Home")
     photo_resizer_html = """
     <!DOCTYPE html>
     <html lang="en">
@@ -507,13 +497,18 @@ elif tool_selection == "Photo Resizer":
     """
     components.html(photo_resizer_html, height=800, scrolling=True)
 # =======================================================
-# ----------------- 4. FILE ORGANISER -------------------
+# ----------------- 3. FILE ORGANISER -------------------
 # =======================================================
-elif tool_selection == "File Organiser":
-    if os.path.exists("file_organizer_icon_1788371632367.jpg"):
-        st.image("file_organizer_icon_1788371632367.jpg", width=80)
-    st.title("Desktop File Organiser")
-    st.write("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
+elif st.session_state.current_page == "File Organiser":
+    top_col1, top_col2 = st.columns([6, 1])
+    with top_col1:
+        if os.path.exists("file_organizer_icon_1788371632367.jpg"):
+            st.image("file_organizer_icon_1788371632367.jpg", width=80)
+        st.title("Desktop File Organiser")
+        st.write("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
+    with top_col2:
+        if st.button("🏠 Home", key="back_org"):
+            navigate_to("Home")
     st.markdown("""
     <div class="trust-badge-container">
         <span class="trust-badge">🛡️ Verified Malware-Free</span>
@@ -603,11 +598,16 @@ If Windows SmartScreen shows a blue popup:
         for cat, exts in categories.items():
             st.write(f"**{cat}**: `{exts}`")
 # =======================================================
-# ----------------- 5. PDF CONVERTER --------------------
+# ----------------- 4. PDF CONVERTER --------------------
 # =======================================================
 else:
-    if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
-        st.image("pdf_converter_icon_1788371743841.jpg", width=80)
-    st.title("PDF Converter")
-    st.write("Merge, split, and convert your PDF files effortlessly.")
+    top_col1, top_col2 = st.columns([6, 1])
+    with top_col1:
+        if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
+            st.image("pdf_converter_icon_1788371743841.jpg", width=80)
+        st.title("PDF Converter Suite")
+        st.write("Merge, split, and convert your PDF files effortlessly.")
+    with top_col2:
+        if st.button("🏠 Home", key="back_pdf"):
+            navigate_to("Home")
     st.info("Status: Under Construction")
