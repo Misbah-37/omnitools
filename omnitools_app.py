@@ -12,7 +12,66 @@ import streamlit.components.v1 as components
 # ----------------- 1. OMNITOOLS CONFIG -----------------
 st.set_page_config(page_title="OmniTools", page_icon="🛠️", layout="wide")
 
-# Display Master Logo at the top of the sidebar
+# Custom CSS for Trust Badges & UI
+st.markdown("""
+<style>
+    .trust-badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 15px 0 25px 0;
+    }
+    .trust-badge {
+        background: #f0fdf4;
+        border: 1px solid #86efac;
+        color: #166534;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .cert-box {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1.5px solid #cbd5e1;
+        border-left: 6px solid #10b981;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        margin-bottom: 25px;
+    }
+    .cert-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .cert-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+    }
+    .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        font-size: 0.85rem;
+        color: #475569;
+        margin-top: 10px;
+        background: #f1f5f9;
+        padding: 12px;
+        border-radius: 8px;
+    }
+    .cert-grid strong {
+        color: #1e293b;
+    }
+</style>
+""", unsafe_allow_html=True)
+# ----------------- SIDEBAR BRANDING -----------------
+# 1. Master Logo in the sidebar
 if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
     st.sidebar.image("omnitools_master_logo_1788371563646.jpg", use_container_width=True)
 
