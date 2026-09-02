@@ -500,7 +500,7 @@ elif tool_selection == "File Organiser":
         st.subheader("⚡ Download & Quick Start")
         st.write("Because web browsers restrict direct file movement on user hard drives, this dedicated **Windows Desktop Utility** provides full native folder access safely.")
         # Check if the zip file exists in the repository
-        exe_filename = "File_Organizer.zip"
+        zip_filename = "File_Organizer.zip"
         if os.path.exists(zip_filename):
             with open(zip_filename, "rb") as f:
                 st.download_button(
