@@ -5,6 +5,7 @@ import string
 import json
 import io
 import os
+import base64
 import shutil
 import zipfile
 import streamlit.components.v1 as components
