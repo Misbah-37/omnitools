@@ -236,44 +236,39 @@ if tool_selection == "Typing Speed Test":
         # --- THE JAVASCRIPT ENGINE ---
         pool_json = json.dumps(st.session_state.pool)
         target_count = st.session_state.target_count
-
+        
         js_code = f"""
         <!DOCTYPE html>
         <html>
         <head>
         <style>
-            body {{ font-family: 'Inter', sans-serif; color: #333; margin: 0; padding: 10px; }}
+            body {{ font-family: 'Inter', sans-serif; color: #e2e8f0; background: transparent; margin: 0; padding: 10px; }}
             .sentence {{ font-size: 20px; line-height: 1.6; letter-spacing: 0.5px; margin-bottom: 20px; user-select: none; word-wrap: break-word; }}
-            .correct {{ color: #0047AB; font-weight: bold; }}
-            .current {{ text-decoration: underline; font-weight: bold; color: #ff007f; background-color: #ffe6f2; }}
-            #stats {{ font-size: 20px; font-weight: bold; color: #0047AB; line-height: 1.5; }}
-            #progress {{ font-size: 16px; color: #666; margin-bottom: 10px; font-weight: bold; }}
+            .correct {{ color: #00d2ff; font-weight: bold; text-shadow: 0 0 8px rgba(0,210,255,0.4); }}
+            .current {{ text-decoration: underline; font-weight: bold; color: #ff3399; background-color: rgba(255, 51, 153, 0.2); border-radius: 3px; padding: 0 2px; }}
+            #stats {{ font-size: 20px; font-weight: bold; color: #00d2ff; line-height: 1.6; }}
+            #progress {{ font-size: 15px; color: #94a3b8; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }}
         </style>
         </head>
         <body>
             <div id="progress">Loading...</div>
             <div id="textDisplay" class="sentence"></div>
             <div id="stats"></div>
-            
             <script>
                 const pool = {pool_json};
                 const targetCount = {target_count};
-                
                 let currentTarget = pool[Math.floor(Math.random() * pool.length)];
                 let currentIndex = 0;
                 let roundsCompleted = 0;
-                
                 let startTime = null;
                 let totalCharactersTyped = 0;
                 let errors = 0;
-                
                 const display = document.getElementById("textDisplay");
                 const stats = document.getElementById("stats");
                 const progress = document.getElementById("progress");
                 
                 function render() {{
                     progress.innerText = `Round: ${{roundsCompleted + 1}} / ${{targetCount}}`;
-                    
                     let html = "";
                     for (let i = 0; i < currentTarget.length; i++) {{
                         if (i < currentIndex) {{
@@ -288,64 +283,44 @@ if tool_selection == "Typing Speed Test":
                 }}
                 
                 window.addEventListener("keydown", function(e) {{
-                    if (roundsCompleted >= targetCount) return; // Test is over
-                    
-                    // Disable Backspace
-                    if (e.key === "Backspace") {{
-                        e.preventDefault(); 
-                        return;
-                    }}
-                    
-                    // Ignore shift, control, meta keys
+                    if (roundsCompleted >= targetCount) return;
+                    if (e.key === "Backspace") {{ e.preventDefault(); return; }}
                     if (e.key.length > 1) return; 
-                    
-                    // Start timer on first keystroke
                     if (startTime === null) startTime = new Date().getTime();
-                    
-                    // Check if they typed the correct letter
                     if (e.key === currentTarget[currentIndex]) {{
                         currentIndex++;
                         totalCharactersTyped++;
                     }} else {{
-                        errors++; // Track mistakes for accuracy
+                        errors++;
                     }}
-                    
-                    // Check if they finished the current target
                     if (currentIndex === currentTarget.length) {{
                         roundsCompleted++;
-                        
                         if (roundsCompleted === targetCount) {{
-                            // TEST COMPLETE!
                             let endTime = new Date().getTime();
                             let elapsedSeconds = (endTime - startTime) / 1000;
                             let wpm = (totalCharactersTyped / 5) / (elapsedSeconds / 60);
                             let accuracy = (totalCharactersTyped / (totalCharactersTyped + errors)) * 100;
-                            
-                            progress.innerText = "Test Complete!";
+                            progress.innerText = "✨ Test Complete!";
                             display.innerHTML = "";
                             stats.innerHTML = `🎉 Perfect! <br> 🚀 Speed: ${{wpm.toFixed(2)}} WPM <br> 🎯 Accuracy: ${{accuracy.toFixed(2)}}%`;
                             return;
                         }} else {{
-                            // Load next item
                             currentTarget = pool[Math.floor(Math.random() * pool.length)];
                             currentIndex = 0;
                         }}
                     }}
-                    
                     render();
                 }});
-                
                 render();
             </script>
         </body>
         </html>
         """
         components.html(js_code, height=350)
-
         if st.button("End Test / Change Difficulty", type="primary"):
             st.session_state.test_active = False
             st.rerun()
-
+        
 # =======================================================
 # ----------------- 3. PHOTO RESIZER --------------------
 # =======================================================
