@@ -10,14 +10,37 @@ import zipfile
 import streamlit.components.v1 as components
 
 # ----------------- 1. OMNITOOLS CONFIG -----------------
-st.set_page_config(page_title="OmniTools | Ultimate Utility Suite", page_icon="🛠️", layout="wide")
-# Custom Dark Mode & Glassmorphism CSS
+st.set_page_config(
+    page_title="OmniTools | Ultimate Utility Suite", 
+    page_icon="🛠️", 
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+# Custom CSS: Hide Sidebar & Apply Modern Dark Theme
 st.markdown("""
 <style>
+    /* Completely hide the sidebar and sidebar toggle */
+    [data-testid="stSidebar"] {
+        display: none !important;
+    }
+    section[data-testid="stSidebar"] {
+        display: none !important;
+    }
+    button[kind="header"] {
+        display: none !important;
+    }
+    
+    /* Center hero content */
+    .hero-container {
+        text-align: center;
+        padding: 10px 0 30px 0;
+    }
+    
     /* Dark Theme Trust Badges */
     .trust-badge-container {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         gap: 12px;
         margin: 15px 0 25px 0;
     }
@@ -79,23 +102,17 @@ if "current_page" not in st.session_state:
 def navigate_to(page_name):
     st.session_state.current_page = page_name
     st.rerun()
-# ----------------- SIDEBAR BRANDING -----------------
-if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
-    st.sidebar.image("omnitools_master_logo_1788371563646.jpg", use_container_width=True)
-st.sidebar.title("🛠️ OmniTools")
-st.sidebar.caption("Your all-in-one productivity suite.")
-# Show Back to Home button in sidebar if inside a tool
-if st.session_state.current_page != "Home":
-    st.sidebar.divider()
-    if st.sidebar.button("🏠 Back to Dashboard", use_container_width=True):
-        navigate_to("Home")
 # =======================================================
 # ----------------- 0. LANDING PAGE (HOME) --------------
 # =======================================================
 if st.session_state.current_page == "Home":
-    st.title("Explore the Suite 🌌")
-    st.markdown("#### *High-performance, private, and lightweight utility tools for your daily workflows.*")
-    
+    # Centered Grand Hero
+    _, hero_col, _ = st.columns([1, 2, 1])
+    with hero_col:
+        if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
+            st.image("omnitools_master_logo_1788371563646.jpg", width=220)
+        st.markdown("<h1 style='text-align: center; margin-top: -10px;'>OmniTools 🌌</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; color: #94a3b8; font-size: 1.1rem;'>High-performance, private, and lightweight utility tools for your daily workflows.</p>", unsafe_allow_html=True)
     st.markdown("""
     <div class="trust-badge-container">
         <span class="trust-badge">⚡ Ultra Fast Execution</span>
@@ -157,15 +174,19 @@ if st.session_state.current_page == "Home":
 # ----------------- 1. TYPING SPEED TEST ----------------
 # =======================================================
 elif st.session_state.current_page == "Typing Speed Test":
-    top_col1, top_col2 = st.columns([6, 1])
-    with top_col1:
-        if os.path.exists("typing_speed_icon_1788371582708.jpg"):
-            st.image("typing_speed_icon_1788371582708.jpg", width=80)
-        st.title("Typing Speed Test")
-        st.write("Test your typing speed and accuracy in real-time.")
-    with top_col2:
-        if st.button("🏠 Home", key="back_type"):
+    top_bar1, top_bar2 = st.columns([6, 1])
+    with top_bar1:
+        c_icon, c_head = st.columns([1, 10])
+        with c_icon:
+            if os.path.exists("typing_speed_icon_1788371582708.jpg"):
+                st.image("typing_speed_icon_1788371582708.jpg", width=65)
+        with c_head:
+            st.markdown("<h2 style='margin:0;'>Typing Speed Test</h2>", unsafe_allow_html=True)
+            st.caption("Test your typing speed and accuracy in real-time.")
+    with top_bar2:
+        if st.button("🏠 Back to Home", key="back_type", use_container_width=True):
             navigate_to("Home")
+    st.divider()
     letters = list(string.ascii_lowercase + string.digits + "!@#$%^&*()_+-=[]{}|;':,.<>/?`~ ")
     words = [
         "apple", "banana", "table", "chair", "mountain", "river", "ocean", "space", "rocket",
@@ -322,15 +343,19 @@ elif st.session_state.current_page == "Typing Speed Test":
 # ----------------- 2. PHOTO RESIZER --------------------
 # =======================================================
 elif st.session_state.current_page == "Photo Resizer":
-    top_col1, top_col2 = st.columns([6, 1])
-    with top_col1:
-        if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
-            st.image("photo_resizer_icon_1788371609489.jpg", width=80)
-        st.title("Exam Photo Resizer & Cropper")
-        st.write("Crop, resize to specific pixel dimensions, and compress within exact KB constraints.")
-    with top_col2:
-        if st.button("🏠 Home", key="back_photo"):
+    top_bar1, top_bar2 = st.columns([6, 1])
+    with top_bar1:
+        c_icon, c_head = st.columns([1, 10])
+        with c_icon:
+            if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
+                st.image("photo_resizer_icon_1788371609489.jpg", width=65)
+        with c_head:
+            st.markdown("<h2 style='margin:0;'>Exam Photo Resizer</h2>", unsafe_allow_html=True)
+            st.caption("Crop, resize to specific pixel dimensions, and compress within exact KB constraints.")
+    with top_bar2:
+        if st.button("🏠 Back to Home", key="back_photo", use_container_width=True):
             navigate_to("Home")
+    st.divider()
     photo_resizer_html = """
     <!DOCTYPE html>
     <html lang="en">
@@ -500,15 +525,19 @@ elif st.session_state.current_page == "Photo Resizer":
 # ----------------- 3. FILE ORGANISER -------------------
 # =======================================================
 elif st.session_state.current_page == "File Organiser":
-    top_col1, top_col2 = st.columns([6, 1])
-    with top_col1:
-        if os.path.exists("file_organizer_icon_1788371632367.jpg"):
-            st.image("file_organizer_icon_1788371632367.jpg", width=80)
-        st.title("Desktop File Organiser")
-        st.write("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
-    with top_col2:
-        if st.button("🏠 Home", key="back_org"):
+    top_bar1, top_bar2 = st.columns([6, 1])
+    with top_bar1:
+        c_icon, c_head = st.columns([1, 10])
+        with c_icon:
+            if os.path.exists("file_organizer_icon_1788371632367.jpg"):
+                st.image("file_organizer_icon_1788371632367.jpg", width=65)
+        with c_head:
+            st.markdown("<h2 style='margin:0;'>Desktop File Organiser</h2>", unsafe_allow_html=True)
+            st.caption("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
+    with top_bar2:
+        if st.button("🏠 Back to Home", key="back_org", use_container_width=True):
             navigate_to("Home")
+    st.divider()
     st.markdown("""
     <div class="trust-badge-container">
         <span class="trust-badge">🛡️ Verified Malware-Free</span>
@@ -601,13 +630,17 @@ If Windows SmartScreen shows a blue popup:
 # ----------------- 4. PDF CONVERTER --------------------
 # =======================================================
 else:
-    top_col1, top_col2 = st.columns([6, 1])
-    with top_col1:
-        if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
-            st.image("pdf_converter_icon_1788371743841.jpg", width=80)
-        st.title("PDF Converter Suite")
-        st.write("Merge, split, and convert your PDF files effortlessly.")
-    with top_col2:
-        if st.button("🏠 Home", key="back_pdf"):
+    top_bar1, top_bar2 = st.columns([6, 1])
+    with top_bar1:
+        c_icon, c_head = st.columns([1, 10])
+        with c_icon:
+            if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
+                st.image("pdf_converter_icon_1788371743841.jpg", width=65)
+        with c_head:
+            st.markdown("<h2 style='margin:0;'>PDF Converter Suite</h2>", unsafe_allow_html=True)
+            st.caption("Merge, split, extract pages, and convert documents to and from PDF seamlessly.")
+    with top_bar2:
+        if st.button("🏠 Back to Home", key="back_pdf", use_container_width=True):
             navigate_to("Home")
+    st.divider()
     st.info("Status: Under Construction")
