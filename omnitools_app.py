@@ -30,12 +30,6 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Center hero content */
-    .hero-container {
-        text-align: center;
-        padding: 10px 0 30px 0;
-    }
-    
     /* Dark Theme Trust Badges */
     .trust-badge-container {
         display: flex;
@@ -106,13 +100,19 @@ def navigate_to(page_name):
 # ----------------- 0. LANDING PAGE (HOME) --------------
 # =======================================================
 if st.session_state.current_page == "Home":
-    # Centered Grand Hero
-    _, hero_col, _ = st.columns([1, 2, 1])
-    with hero_col:
-        if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
-            st.image("omnitools_master_logo_1788371563646.jpg", width=220)
-        st.markdown("<h1 style='text-align: center; margin-top: -10px;'>OmniTools 🌌</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #94a3b8; font-size: 1.1rem;'>High-performance, private, and lightweight utility tools for your daily workflows.</p>", unsafe_allow_html=True)
+    # 1. Centered Master Hero with Glowing Logo
+    logo_html = ""
+    if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
+        with open("omnitools_master_logo_1788371563646.jpg", "rb") as f:
+            b64_logo = base64.b64encode(f.read()).decode()
+            logo_html = f"<img src='data:image/jpeg;base64,{b64_logo}' style='width: 170px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,210,255,0.25); margin-bottom: 15px;' />"
+    st.markdown(f"""
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-top: 10px; margin-bottom: 20px;">
+        {logo_html}
+        <h1 style="margin: 0; font-size: 2.8rem; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px;">OmniTools 🌌</h1>
+        <p style="color: #94a3b8; font-size: 1.15rem; max-width: 600px; margin-top: 8px; margin-bottom: 0;">High-performance, private, and lightweight utility tools for your daily workflows.</p>
+    </div>
+    """, unsafe_allow_html=True)
     st.markdown("""
     <div class="trust-badge-container">
         <span class="trust-badge">⚡ Ultra Fast Execution</span>
@@ -122,54 +122,62 @@ if st.session_state.current_page == "Home":
     </div>
     """, unsafe_allow_html=True)
     st.divider()
-    # 2x2 Grid of Tools
-    row1_col1, row1_col2 = st.columns(2)
+    # 2. Perfectly Aligned 2x2 Grid of Cards
+    row1_col1, row1_col2 = st.columns(2, gap="large")
     # Card 1: Typing Test
     with row1_col1:
-        c1, c2 = st.columns([1, 4])
-        with c1:
-            if os.path.exists("typing_speed_icon_1788371582708.jpg"):
-                st.image("typing_speed_icon_1788371582708.jpg", width=75)
-        with c2:
-            st.markdown("### Typing Speed Test")
-            st.caption("Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.")
-        if st.button("Launch Typing Test ➔", key="btn_type", use_container_width=True):
-            navigate_to("Typing Speed Test")
+        with st.container(border=True):
+            c1, c2 = st.columns([1, 4])
+            with c1:
+                if os.path.exists("typing_speed_icon_1788371582708.jpg"):
+                    st.image("typing_speed_icon_1788371582708.jpg", width=65)
+            with c2:
+                st.markdown("<h3 style='margin:0;'>Typing Speed Test</h3>", unsafe_allow_html=True)
+                st.caption("Speed & Accuracy Benchmark")
+            st.markdown("<div style='height: 52px; color: #94a3b8; font-size: 0.95rem; margin-top: 8px;'>Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.</div>", unsafe_allow_html=True)
+            if st.button("Launch Typing Test ➔", key="btn_type", use_container_width=True):
+                navigate_to("Typing Speed Test")
     # Card 2: Photo Resizer
     with row1_col2:
-        c1, c2 = st.columns([1, 4])
-        with c1:
-            if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
-                st.image("photo_resizer_icon_1788371609489.jpg", width=75)
-        with c2:
-            st.markdown("### Photo Resizer")
-            st.caption("Interactive image cropper and binary-search compressor to hit exact pixel dimensions and strict KB limits.")
-        if st.button("Launch Photo Resizer ➔", key="btn_photo", use_container_width=True):
-            navigate_to("Photo Resizer")
+        with st.container(border=True):
+            c1, c2 = st.columns([1, 4])
+            with c1:
+                if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
+                    st.image("photo_resizer_icon_1788371609489.jpg", width=65)
+            with c2:
+                st.markdown("<h3 style='margin:0;'>Photo Resizer</h3>", unsafe_allow_html=True)
+                st.caption("Precision Crop & Compress")
+            st.markdown("<div style='height: 52px; color: #94a3b8; font-size: 0.95rem; margin-top: 8px;'>Interactive image cropper and compressor to hit exact pixel dimensions and strict KB limits.</div>", unsafe_allow_html=True)
+            if st.button("Launch Photo Resizer ➔", key="btn_photo", use_container_width=True):
+                navigate_to("Photo Resizer")
     st.write("")
-    row2_col1, row2_col2 = st.columns(2)
+    row2_col1, row2_col2 = st.columns(2, gap="large")
     # Card 3: File Organiser
     with row2_col1:
-        c1, c2 = st.columns([1, 4])
-        with c1:
-            if os.path.exists("file_organizer_icon_1788371632367.jpg"):
-                st.image("file_organizer_icon_1788371632367.jpg", width=75)
-        with c2:
-            st.markdown("### Desktop File Organiser")
-            st.caption("Standalone verified Windows desktop utility to organize any messy folder on your PC in a single click.")
-        if st.button("Get File Organiser ➔", key="btn_org", use_container_width=True):
-            navigate_to("File Organiser")
+        with st.container(border=True):
+            c1, c2 = st.columns([1, 4])
+            with c1:
+                if os.path.exists("file_organizer_icon_1788371632367.jpg"):
+                    st.image("file_organizer_icon_1788371632367.jpg", width=65)
+            with c2:
+                st.markdown("<h3 style='margin:0;'>Desktop File Organiser</h3>", unsafe_allow_html=True)
+                st.caption("Standalone Windows Utility")
+            st.markdown("<div style='height: 52px; color: #94a3b8; font-size: 0.95rem; margin-top: 8px;'>Standalone verified desktop app to organize messy folders on your PC into 12 clean categories.</div>", unsafe_allow_html=True)
+            if st.button("Get File Organiser ➔", key="btn_org", use_container_width=True):
+                navigate_to("File Organiser")
     # Card 4: PDF Converter
     with row2_col2:
-        c1, c2 = st.columns([1, 4])
-        with c1:
-            if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
-                st.image("pdf_converter_icon_1788371743841.jpg", width=75)
-        with c2:
-            st.markdown("### PDF Converter Suite")
-            st.caption("Merge, split, extract pages, and convert documents to and from PDF seamlessly.")
-        if st.button("Open PDF Converter ➔", key="btn_pdf", use_container_width=True):
-            navigate_to("PDF Converter")
+        with st.container(border=True):
+            c1, c2 = st.columns([1, 4])
+            with c1:
+                if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
+                    st.image("pdf_converter_icon_1788371743841.jpg", width=65)
+            with c2:
+                st.markdown("<h3 style='margin:0;'>PDF Converter Suite</h3>", unsafe_allow_html=True)
+                st.caption("Document Transformation")
+            st.markdown("<div style='height: 52px; color: #94a3b8; font-size: 0.95rem; margin-top: 8px;'>Merge, split, extract pages, and convert documents to and from PDF seamlessly.</div>", unsafe_allow_html=True)
+            if st.button("Open PDF Converter ➔", key="btn_pdf", use_container_width=True):
+                navigate_to("PDF Converter")
 # =======================================================
 # ----------------- 1. TYPING SPEED TEST ----------------
 # =======================================================
