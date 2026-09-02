@@ -512,7 +512,7 @@ elif tool_selection == "Photo Resizer":
 elif tool_selection == "File Organiser":
     if os.path.exists("file_organizer_icon_1788371632367.jpg"):
         st.image("file_organizer_icon_1788371632367.jpg", width=90)
-    st.title("🗂️ Desktop File Organiser")
+    st.title("Desktop File Organiser")
     st.write("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
     # Trust Badges Bar
     st.markdown("""
