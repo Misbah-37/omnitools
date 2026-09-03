@@ -149,8 +149,7 @@ if st.session_state.current_page == "Home":
                 Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.
             </div>
             """, unsafe_allow_html=True)
-            if st.button("Launch Typing Test ➔", key="btn_type", use_container_width=True):
-                navigate_to("Typing Speed Test")
+            st.page_link("pages/1_Typing_Test.py", label="Launch Typing Test ➔", use_container_width=True)
 
     # Card 2: Photo Resizer
     with row1_col2:
@@ -168,8 +167,7 @@ if st.session_state.current_page == "Home":
                 Interactive image cropper and compressor to hit exact pixel dimensions and strict KB limits.
             </div>
             """, unsafe_allow_html=True)
-            if st.button("Launch Photo Resizer ➔", key="btn_photo", use_container_width=True):
-                navigate_to("Photo Resizer")
+            st.page_link("pages/2_Photo_Resizer.py", label="Launch Photo Resizer ➔", use_container_width=True)
 
     st.write("")
 
@@ -191,8 +189,7 @@ if st.session_state.current_page == "Home":
                 Standalone verified desktop app to organize messy folders on your PC into 12 clean categories.
             </div>
             """, unsafe_allow_html=True)
-            if st.button("Get File Organiser ➔", key="btn_org", use_container_width=True):
-                navigate_to("File Organiser")
+            st.page_link("pages/3_File_Organiser.py", label="Get File Organiser ➔", use_container_width=True)
 
     # Card 4: PDF Converter
     with row2_col2:
@@ -210,8 +207,7 @@ if st.session_state.current_page == "Home":
                 Merge, split, extract pages, and convert documents to and from PDF seamlessly.
             </div>
             """, unsafe_allow_html=True)
-            if st.button("Open PDF Converter ➔", key="btn_pdf", use_container_width=True):
-                navigate_to("PDF Converter")
+            st.page_link("pages/4_PDF_Converter.py", label="Open PDF Converter ➔", use_container_width=True)
 
 
 
