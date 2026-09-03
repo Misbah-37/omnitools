@@ -1,10 +1,10 @@
 # =======================================================
 # ----------------- 1. TYPING SPEED TEST ----------------
 # =======================================================
-import json
+import random
 import string
+import time
 import streamlit as st
-import streamlit.components.v1 as components
 from utils import render_icon_html
 
 # --- SEO METADATA ---
@@ -13,6 +13,7 @@ st.set_page_config(
     page_icon="⌨️",
     layout="wide",
 )
+
 top_bar1, top_bar2 = st.columns([6, 1])
 with top_bar1:
   img_html = render_icon_html(
@@ -38,6 +39,7 @@ with top_bar2:
 
 st.divider()
 
+# Word pools
 letters = list(
     string.ascii_lowercase + string.digits + "!@#$%^&*()_+-=[]{}|;':,.<>/?`~ "
 )
@@ -231,154 +233,97 @@ difficulty = st.radio(
         "3. Hard (10 Sentences)",
         "4. Expert (1 Paragraph)",
     ],
+    horizontal=True,
 )
 
-if "test_active" not in st.session_state:
-  st.session_state.test_active = False
+# Initialize session state
+if "test_started" not in st.session_state:
+  st.session_state.test_started = False
+if "target_text" not in st.session_state:
+  st.session_state.target_text = ""
+if "start_time" not in st.session_state:
+  st.session_state.start_time = None
 
 
-def start_test():
-  st.session_state.test_active = True
+def init_game():
+  st.session_state.test_started = True
+  st.session_state.start_time = None
   if "Easy" in difficulty:
-    st.session_state.pool = letters
-    st.session_state.target_count = 30
+    st.session_state.target_text = "".join(random.choices(letters, k=30))
   elif "Medium" in difficulty:
-    st.session_state.pool = words
-    st.session_state.target_count = 15
+    st.session_state.target_text = " ".join(random.choices(words, k=5))
   elif "Hard" in difficulty:
-    st.session_state.pool = sentences
-    st.session_state.target_count = 10
+    st.session_state.target_text = random.choice(sentences)
   else:
-    st.session_state.pool = paragraphs
-    st.session_state.target_count = 1
+    st.session_state.target_text = random.choice(paragraphs)
 
 
-if not st.session_state.test_active:
-  st.button("Start Typing Test", on_click=start_test, type="primary")
-else:
-  pool_json = json.dumps(st.session_state.pool)
-  target_count = st.session_state.target_count
-
-  js_template = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-    <style>
-        body { font-family: 'Inter', sans-serif; color: #e2e8f0; background: transparent; margin: 0; padding: 10px; }
-        .sentence { font-size: 20px; line-height: 1.6; letter-spacing: 0.5px; margin-bottom: 20px; user-select: none; word-wrap: break-word; }
-        .correct { color: #00d2ff; font-weight: bold; text-shadow: 0 0 8px rgba(0,210,255,0.4); }
-        .current { text-decoration: underline; font-weight: bold; color: #ff3399; background-color: rgba(255, 51, 153, 0.2); border-radius: 3px; padding: 0 2px; }
-        #stats { font-size: 20px; font-weight: bold; color: #00d2ff; line-height: 1.6; }
-        #progress { font-size: 15px; color: #94a3b8; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .typing-input {
-            width: 100%;
-            padding: 12px 16px;
-            font-size: 18px;
-            background: #1e293b;
-            color: #f8fafc;
-            border: 2px solid #00d2ff;
-            border-radius: 8px;
-            outline: none;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-        }
-    </style>
-    </head>
-    <body>
-        <div id="progress">Loading...</div>
-        <div id="textDisplay" class="sentence"></div>
-        <input type="text" id="typingInput" class="typing-input" placeholder="Tap here and start typing..." autocomplete="off" autocapitalize="off" spellcheck="false" />
-        <div id="stats"></div>
-        <script>
-            const pool = __POOL_JSON__;
-            const targetCount = __TARGET_COUNT__;
-            let currentTarget = pool[Math.floor(Math.random() * pool.length)];
-            let roundsCompleted = 0;
-            let startTime = null;
-            let totalCharactersTyped = 0;
-            let errors = 0;
-            
-            const display = document.getElementById("textDisplay");
-            const stats = document.getElementById("stats");
-            const progress = document.getElementById("progress");
-            const inputField = document.getElementById("typingInput");
-            
-            inputField.focus();
-            
-            function render() {
-                progress.innerText = "Round: " + (roundsCompleted + 1) + " / " + targetCount;
-                const typedText = inputField.value;
-                let html = "";
-                
-                for (let i = 0; i < currentTarget.length; i++) {
-                    if (i < typedText.length) {
-                        if (typedText[i] === currentTarget[i]) {
-                            html += '<span class="correct">' + currentTarget[i] + '</span>';
-                        } else {
-                            html += '<span class="current" style="color: #ef4444; background: rgba(239,68,68,0.2);">' + currentTarget[i] + '</span>';
-                        }
-                    } else if (i === typedText.length) {
-                        html += '<span class="current">' + currentTarget[i] + '</span>';
-                    } else {
-                        html += '<span>' + currentTarget[i] + '</span>';
-                    }
-                }
-                display.innerHTML = html;
-            }
-            
-            inputField.addEventListener("input", function(e) {
-                if (roundsCompleted >= targetCount) return;
-                
-                const typedText = inputField.value;
-                if (startTime === null && typedText.length > 0) {
-                    startTime = new Date().getTime();
-                }
-                
-                let currentErrors = 0;
-                for (let i = 0; i < typedText.length; i++) {
-                    if (i < currentTarget.length) {
-                        if (typedText[i] !== currentTarget[i]) currentErrors++;
-                    } else {
-                        currentErrors++;
-                    }
-                }
-                errors = currentErrors;
-                
-                if (typedText === currentTarget) {
-                    roundsCompleted++;
-                    totalCharactersTyped += currentTarget.length;
-                    inputField.value = "";
-                    
-                    if (roundsCompleted === targetCount) {
-                        let endTime = new Date().getTime();
-                        let elapsedSeconds = (endTime - startTime) / 1000;
-                        let wpm = (totalCharactersTyped / 5) / (elapsedSeconds / 60);
-                        let accuracy = (totalCharactersTyped / (totalCharactersTyped + errors)) * 100;
-                        progress.innerText = "✨ Test Complete!";
-                        display.innerHTML = "";
-                        inputField.style.display = "none";
-                        stats.innerHTML = "🎉 Perfect! <br> 🚀 Speed: " + wpm.toFixed(2) + " WPM <br> 🎯 Accuracy: " + accuracy.toFixed(2) + "%";
-                        return;
-                    } else {
-                        currentTarget = pool[Math.floor(Math.random() * pool.length)];
-                    }
-                }
-                render();
-            });
-            
-            render();
-        </script>
-    </body>
-    </html>
-    """
-
-  # Safely inject python variables without f-string brace conflicts
-  js_code = (
-      js_template.replace("__POOL_JSON__", pool_json)
-      .replace("__TARGET_COUNT__", str(target_count))
-  )
-  components.html(js_code, height=380)
-
-  if st.button("End Test / Change Difficulty", type="primary"):
-    st.session_state.test_active = False
+if not st.session_state.test_started:
+  if st.button("🚀 Start Typing Test", type="primary"):
+    init_game()
     st.rerun()
+else:
+  target = st.session_state.target_text
+
+  st.markdown("### Type this text:")
+
+  # Render colored target text directly using standard markdown/HTML for maximum clarity
+  # Cyan = Correctly typed so far, Red = Mistake made at position, Gray = Upcoming
+  user_input = st.session_state.get("user_typing_box", "")
+
+  # Start timer on first keystroke
+  if user_input and st.session_state.start_time is None:
+    st.session_state.start_time = time.time()
+
+  # Build clear visual representation
+  colored_html = "<div style='font-size: 22px; font-family: monospace; line-height: 1.8; background: #0f172a; padding: 20px; border-radius: 10px; border: 1px solid #334155; word-break: break-all;'>"
+  for i, char in enumerate(target):
+    if i < len(user_input):
+      if user_input[i] == char:
+        colored_html += (
+            f"<span style='color: #00d2ff; font-weight: bold;'>{char}</span>"
+        )
+      else:
+        colored_html += f"<span style='color: #ef4444; background: rgba(239, 68, 68, 0.3); font-weight: bold;'>{char}</span>"
+    elif i == len(user_input):
+      colored_html += (
+          f"<span style='color: #fbbf24; background: rgba(251, 191, 36,"
+          f" 0.3); border-bottom: 2px solid #fbbf24; font-weight:"
+          f" bold;'>{char}</span>"
+      )
+    else:
+      colored_html += f"<span style='color: #64748b;'>{char}</span>"
+  colored_html += "</div>"
+
+  st.markdown(colored_html, unsafe_allow_html=True)
+
+  # Native text box that triggers mobile virtual keyboard instantly and reliably
+  typed = st.text_input(
+      "Type here:", key="user_typing_box", placeholder="Start typing here..."
+  )
+
+  # Check completion condition
+  if typed == target:
+    elapsed = time.time() - st.session_state.start_time if st.session_state.start_time else 1
+    minutes = elapsed / 60
+    words_count = len(target.split())
+    wpm = int(words_count / minutes) if minutes > 0 else 0
+
+    st.success(
+        f"🎉 **Test Complete!** Speed: **{wpm} WPM** | Time:"
+        f" **{elapsed:.2f}s**"
+    )
+    if st.button("Play Again"):
+      st.session_state.test_started = False
+      st.session_state.user_typing_box = ""
+      st.rerun()
+
+  col1, col2 = st.columns(2)
+  with col1:
+    if st.button("Reset / New Text"):
+      init_game()
+      st.rerun()
+  with col2:
+    if st.button("Change Difficulty"):
+      st.session_state.test_started = False
+      st.rerun()
