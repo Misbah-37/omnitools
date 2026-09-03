@@ -789,15 +789,63 @@ else:
                 with c_opt3:
                     margin_choice = st.selectbox("Margins:", ["Small (10mm)", "None (Full Bleed)", "Medium (20mm)"], index=0)
             
+            # Local self-contained processor
+            def process_canvas(image_file, p_size, orient, marg):
+                im = Image.open(image_file)
+                im = ImageOps.exif_transpose(im)
+                if im.mode in ("RGBA", "LA") or (im.mode == "P" and "transparency" in im.info):
+                    alpha = im.convert("RGBA")
+                    bg = Image.new("RGBA", alpha.size, (255, 255, 255, 255))
+                    bg.paste(alpha, mask=alpha.split()[3])
+                    im = bg.convert("RGB")
+                else:
+                    im = im.convert("RGB")
+                    
+                if p_size == "Fit to Image (Original)":
+                    return im
+                    
+                sizes = {"A4 (Standard)": (595, 842), "US Letter": (612, 792)}
+                base_w, base_h = sizes.get(p_size, (595, 842))
+                
+                if orient == "Auto (Smart Detect)":
+                    is_land = im.width > im.height
+                elif orient == "Force Landscape":
+                    is_land = True
+                else:
+                    is_land = False
+                    
+                canv_w = max(base_w, base_h) if is_land else min(base_w, base_h)
+                canv_h = min(base_w, base_h) if is_land else max(base_w, base_h)
+                
+                margins = {"None (Full Bleed)": 0, "Small (10mm)": 28, "Medium (20mm)": 56}
+                m_val = margins.get(marg, 28)
+                
+                av_w = max(10, canv_w - 2 * m_val)
+                av_h = max(10, canv_h - 2 * m_val)
+                
+                aspect = im.width / im.height
+                target_aspect = av_w / av_h
+                
+                if aspect > target_aspect:
+                    nw = av_w
+                    nh = max(1, int(av_w / aspect))
+                else:
+                    nh = av_h
+                    nw = max(1, int(av_h * aspect))
+                    
+                resized = im.resize((nw, nh), Image.Resampling.LANCZOS)
+                canvas = Image.new("RGB", (canv_w, canv_h), (255, 255, 255))
+                canvas.paste(resized, ((canv_w - nw) // 2, (canv_h - nh) // 2))
+                return canvas
             if st.button("🚀 Compile & Download PDF", type="primary"):
                 with st.spinner("Processing & standardizing images..."):
                     img_list = []
                     for img_file in uploaded_imgs:
-                        processed_img = process_image_to_canvas(
+                        processed_img = process_canvas(
                             img_file, 
-                            page_size=page_size, 
-                            orientation_mode=orientation, 
-                            margin_mode=margin_choice
+                            p_size=page_size, 
+                            orient=orientation, 
+                            marg=margin_choice
                         )
                         img_list.append(processed_img)
                     
