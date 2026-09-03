@@ -4,6 +4,12 @@
 import streamlit as st
 import os
 from utils import render_icon_html
+# --- SEO METADATA ---
+st.set_page_config(
+    page_title="Automated Desktop File Organizer | Clean Your PC Instantly | OmniTools",
+    page_icon="📁",
+    layout="wide"
+)
 top_bar1, top_bar2 = st.columns([6, 1])
 with top_bar1:
     img_html = render_icon_html("file_icon.png", "file_organizer_icon_1788371632367.jpg", size=65, glow_color="rgba(52, 211, 153, 0.4)")
