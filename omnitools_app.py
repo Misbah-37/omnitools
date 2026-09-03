@@ -758,15 +758,68 @@ else:
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_pdf", use_container_width=True):
             navigate_to("Home")
-
     st.divider()
-    tab_merge, tab_split, tab_img2pdf, tab_extract = st.tabs([
+    tab_img2pdf, tab_merge, tab_split, tab_extract = st.tabs([
+        "🖼️ Images to PDF",
         "📑 Merge PDFs", 
         "✂️ Split / Extract Pages", 
-        "🖼️ Images to PDF", 
         "📝 Extract Text"
     ])
-    # ---------------- TAB 1: MERGE PDFS ----------------
+    # ---------------- TAB 1: IMAGES TO PDF ----------------
+    with tab_img2pdf:
+        st.subheader("Convert Images to Standardized PDF")
+        st.caption("Auto-aligns orientation, standardizes page sizes (A4/Letter), and compiles images with crystal clarity.")
+        
+        uploaded_imgs = st.file_uploader(
+            "Select images to convert", 
+            type=["jpg", "jpeg", "png", "webp"], 
+            accept_multiple_files=True,
+            key="img_upload"
+        )
+        
+        if uploaded_imgs:
+            st.write(f"🖼️ Selected **{len(uploaded_imgs)}** image(s).")
+            
+            with st.expander("⚙️ Optional Page Formatting & Canvas Options", expanded=False):
+                c_opt1, c_opt2, c_opt3 = st.columns(3)
+                with c_opt1:
+                    page_size = st.selectbox("Page Size:", ["A4 (Standard)", "US Letter", "Fit to Image (Original)"], index=0)
+                with c_opt2:
+                    orientation = st.selectbox("Orientation:", ["Auto (Smart Detect)", "Force Portrait", "Force Landscape"], index=0)
+                with c_opt3:
+                    margin_choice = st.selectbox("Margins:", ["Small (10mm)", "None (Full Bleed)", "Medium (20mm)"], index=0)
+            
+            if st.button("🚀 Compile & Download PDF", type="primary"):
+                with st.spinner("Processing & standardizing images..."):
+                    img_list = []
+                    for img_file in uploaded_imgs:
+                        processed_img = process_image_to_canvas(
+                            img_file, 
+                            page_size=page_size, 
+                            orientation_mode=orientation, 
+                            margin_mode=margin_choice
+                        )
+                        img_list.append(processed_img)
+                    
+                    if img_list:
+                        pdf_buffer = io.BytesIO()
+                        img_list[0].save(
+                            pdf_buffer,
+                            format="PDF",
+                            save_all=True,
+                            append_images=img_list[1:]
+                        )
+                        pdf_buffer.seek(0)
+                        
+                        st.success(f"✅ Successfully compiled {len(img_list)} images into a standardized PDF!")
+                        st.download_button(
+                            label="⬇️ Download Compiled PDF",
+                            data=pdf_buffer,
+                            file_name="OmniTools_Compiled_Images.pdf",
+                            mime="application/pdf",
+                            type="primary"
+                        )
+    # ---------------- TAB 2: MERGE PDFS ----------------
     with tab_merge:
         st.subheader("Merge Multiple PDF Files")
         st.caption("Upload 2 or more PDF files to combine them in exact order into a single document.")
@@ -805,7 +858,7 @@ else:
                     )
         elif uploaded_pdfs:
             st.info("💡 Please upload at least 2 PDF files to merge.")
-    # ---------------- TAB 2: SPLIT / EXTRACT PAGES ----------------
+    # ---------------- TAB 3: SPLIT / EXTRACT PAGES ----------------
     with tab_split:
         st.subheader("Split or Extract Pages from a PDF")
         st.caption("Extract specific pages or page ranges from a large PDF document.")
@@ -863,45 +916,6 @@ else:
                             )
                     except Exception as e:
                         st.error(f"Error parsing page ranges: {str(e)}")
-    # ---------------- TAB 3: IMAGES TO PDF ----------------
-    with tab_img2pdf:
-        st.subheader("Convert Images to PDF")
-        st.caption("Convert multiple images (JPG, PNG, WebP) into a high-quality, compiled PDF document.")
-        
-        uploaded_imgs = st.file_uploader(
-            "Upload images to convert", 
-            type=["jpg", "jpeg", "png", "webp"], 
-            accept_multiple_files=True,
-            key="img_upload"
-        )
-        
-        if uploaded_imgs:
-            st.write(f"🖼️ Selected **{len(uploaded_imgs)}** image(s).")
-            
-            if st.button("📄 Convert to PDF", type="primary"):
-                img_list = []
-                for img_file in uploaded_imgs:
-                    img = Image.open(img_file).convert("RGB")
-                    img_list.append(img)
-                
-                if img_list:
-                    pdf_buffer = io.BytesIO()
-                    img_list[0].save(
-                        pdf_buffer,
-                        format="PDF",
-                        save_all=True,
-                        append_images=img_list[1:]
-                    )
-                    pdf_buffer.seek(0)
-                    
-                    st.success(f"✅ Successfully converted {len(img_list)} images into PDF!")
-                    st.download_button(
-                        label="⬇️ Download Compiled PDF",
-                        data=pdf_buffer,
-                        file_name="Images_Compiled.pdf",
-                        mime="application/pdf",
-                        type="primary"
-                    )
     # ---------------- TAB 4: EXTRACT TEXT FROM PDF ----------------
     with tab_extract:
         st.subheader("Extract Raw Text from PDF")
