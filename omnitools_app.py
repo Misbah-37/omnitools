@@ -142,7 +142,7 @@ if st.session_state.current_page == "Home":
     # Card 1: Typing Test
     with row1_col1:
         with st.container(border=True):
-            img_html = render_icon_html("typing_speed_icon_1788371582708.jpg", size=80)
+            img_html = render_icon_html("typing_icon_crisp_1788420838779.jpg", size=80)
             st.markdown(f"""
             <div style="display: flex; gap: 16px; align-items: center;">
                 {img_html}
