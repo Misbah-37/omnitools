@@ -1,188 +1,210 @@
-# =======================================================
-# ----------------- 1. TYPING SPEED TEST ----------------
-# =======================================================
 import streamlit as st
-import streamlit.components.v1 as components
+import random
+import time
 import string
 import json
-from utils import render_icon_html
-# --- SEO METADATA ---
+import io
+import os
+import base64
+from utils import find_image, render_icon_html
+from PIL import Image, ImageOps
+try:
+    from pypdf import PdfReader, PdfWriter
+except ImportError:
+    PdfReader, PdfWriter = None, None
+
+import streamlit.components.v1 as components
+
+# ----------------- 1. OMNITOOLS CONFIG -----------------
 st.set_page_config(
-    page_title="Free WPM Typing Speed Test | Ad-Free Benchmark | OmniTools",
-    page_icon="⌨️",
-    layout="wide"
+    page_title="OmniTools | Ultimate Utility Suite", 
+    page_icon="🛠️", 
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
-top_bar1, top_bar2 = st.columns([6, 1])
-with top_bar1:
-    img_html = render_icon_html("typing_icon.png", "typing_speed_icon_1788371582708.jpg", size=65, glow_color="rgba(255, 51, 153, 0.4)")
-    st.markdown(f"""
-    <div style="display: flex; gap: 16px; align-items: center;">
-        {img_html}
-        <div>
-            <h2 style="margin: 0; color: #f8fafc;">Typing Speed Test</h2>
-            <div style="color: #94a3b8; font-size: 0.95rem;">Test your typing speed and accuracy in real-time.</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-with top_bar2:
-    st.page_link("omnitools_app.py", label="🏠 Back", use_container_width=True)
+
+# Custom CSS: Dark Theme, Glass Cards & Crisp Icons
+st.markdown("""
+<style>
+    /* Hide sidebar completely */
+    [data-testid="stSidebar"] { display: none !important; }
+    section[data-testid="stSidebar"] { display: none !important; }
+    button[kind="header"] { display: none !important; }
+    
+    /* Smooth Crisp Image Rendering */
+    img {
+        border-radius: 16px;
+        image-rendering: -webkit-optimize-contrast;
+    }
+    
+    /* Dark Theme Trust Badges */
+    .trust-badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin: 15px 0 25px 0;
+    }
+    .trust-badge {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        color: #34d399;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        backdrop-filter: blur(8px);
+    }
+    /* Dark Theme Security Certificate */
+    .cert-box {
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+        border: 1px solid #374151;
+        border-left: 5px solid #10b981;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        margin-bottom: 25px;
+    }
+    .cert-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .cert-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #f9fafb;
+        margin: 0;
+    }
+    .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        font-size: 0.85rem;
+        color: #9ca3af;
+        margin-top: 10px;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        padding: 14px;
+        border-radius: 8px;
+    }
+    .cert-grid strong {
+        color: #e2e8f0;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+# =======================================================
+# ----------------- 0. LANDING PAGE (HOME) --------------
+# =======================================================
+
+master_path = find_image("omnitools_logo.png", "omnitools_master_logo_1788371563646.jpg")
+master_logo_html = ""
+if master_path:
+    with open(master_path, "rb") as f:
+        b64_logo = base64.b64encode(f.read()).decode()
+        mime = "image/png" if master_path.endswith(".png") else "image/jpeg"
+        master_logo_html = f"<img src='data:{mime};base64,{b64_logo}' style='width: 175px; filter: drop-shadow(0 12px 28px rgba(0, 210, 255, 0.45)); margin-bottom: 15px;' />"
+
+st.markdown(f"""
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-top: 10px; margin-bottom: 20px;">
+    {master_logo_html}
+    <h1 style="margin: 0; font-size: 2.8rem; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px;">OmniTools 🌌</h1>
+    <p style="color: #94a3b8; font-size: 1.15rem; max-width: 600px; margin-top: 8px; margin-bottom: 0;">High-performance, private, and lightweight utility tools for your daily workflows.</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class="trust-badge-container">
+    <span class="trust-badge">⚡ Ultra Fast Execution</span>
+    <span class="trust-badge">🔒 100% Privacy Focused</span>
+    <span class="trust-badge">💻 Modern Dark Mode Suite</span>
+    <span class="trust-badge">🚀 Zero Installation Required</span>
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
-letters = list(string.ascii_lowercase + string.digits + "!@#$%^&*()_+-=[]{}|;':,.<>/?`~ ")
-words = [
-    "apple", "banana", "table", "chair", "mountain", "river", "ocean", "space", "rocket",
-    "planet", "orbit", "galaxy", "universe", "telescope", "computer", "keyboard", "mouse",
-    "screen", "window", "door", "house", "building", "street", "city", "country", "world",
-    "globe", "map", "compass", "north", "south", "east", "west", "up", "down", "left", "right",
-    "front", "back", "top", "bottom", "inside", "outside", "near", "far", "close", "open", "shut",
-    "lock", "key", "safe", "danger", "fast", "slow", "quick", "speedy", "rapid", "swift", "sudden",
-    "abrupt", "gradual", "steady", "constant", "changing", "dynamic", "static", "still", "quiet",
-    "loud", "noisy", "silent", "peaceful", "calm", "chaotic", "messy", "neat", "tidy", "clean", "dirty",
-    "filthy", "spotless", "bright", "dark", "light", "heavy", "soft", "hard", "rough", "smooth", "sharp",
-    "dull", "blunt", "pointed", "round", "square", "flat", "curved", "straight", "bent", "broken"
-]
-sentences = [
-    "The quick brown fox jumps over the lazy dog.",
-    "Pack my box with five dozen liquor jugs.",
-    "How vexingly quick daft zebras jump!",
-    "Sphinx of black quartz, judge my vow.",
-    "Two driven jocks help fax my big quiz.",
-    "Five quacking zephyrs jolt my wax bed.",
-    "The five boxing wizards jump quickly.",
-    "Bright vixens jump; dozy fowl quack.",
-    "A wizard's job is to vex chumps quickly in fog.",
-    "Watch Jeopardy, Alex Trebek's fun TV quiz game.",
-    "By Jove, my quick study of lexicography won a prize.",
-    "Programming is not about memorizing code; it is about solving problems.",
-    "Artificial Intelligence is changing the world very quickly.",
-    "The internet is a vast network that connects computers all over the world.",
-    "Cybersecurity is the practice of protecting systems, networks, and programs.",
-    "Software engineering is the systematic application of engineering approaches.",
-    "Cloud computing provides on-demand availability of computer system resources.",
-    "Python is an interpreted, high-level and general-purpose programming language."
-]
-paragraphs = [
-    "The morning sun cast a gentle golden glow across the quiet streets as the city slowly woke up. A cool breeze carried the sweet aroma of freshly brewed coffee from the corner bakery, welcoming early morning commuters on their way to work.",
-    "Consistency is the secret ingredient behind mastering any new skill in life. When you dedicate even ten minutes each day to focused practice, the compound effect over months and years produces remarkable results that talent alone cannot achieve.",
-    "Reading books is one of the most rewarding habits you can develop. It allows you to travel across different eras, explore distant worlds, and experience the thoughts of great minds throughout history, all from the comfort of your favorite armchair.",
-    "The ocean covers more than seventy percent of our planet and remains one of the least explored frontiers on Earth. Beneath its shimmering surface lie vast underwater mountain ranges, deep trenches, and countless mysterious creatures that have never seen sunlight.",
-    "In the modern digital era, learning how to type quickly and accurately is an essential superpower. It allows your thoughts to flow seamlessly onto the screen without interruption, boosting both your productivity and creative expression.",
-    "Clean code is like well-written prose; it is intuitive, easy to understand, and pleasant to maintain over time. Great software engineers do not just write code for machines to execute, but for fellow developers to read and improve.",
-    "Coding is equal parts logic and creativity. Whether building a simple calculator, designing an interactive game, or training a machine learning model, programming gives you the power to bring abstract ideas into tangible reality.",
-    "Master the art of finishing what you start. While starting new projects is exciting, the true satisfaction and growth come from pushing through the messy middle and bringing your work across the finish line."
-]
+# 2x2 Grid of Floating Crystal Cards
+row1_col1, row1_col2 = st.columns(2, gap="large")
 
-difficulty = st.radio(
-    "Choose Difficulty:", 
-    ["1. Easy (30 Letters)", "2. Medium (15 Words)", "3. Hard (10 Sentences)", "4. Expert (1 Paragraph)"]
-)
+# Card 1: Typing Test
+with row1_col1:
+    with st.container(border=True):
+        img_html = render_icon_html("typing_icon.png", "typing_speed_icon_1788371582708.jpg", size=75, glow_color="rgba(255, 51, 153, 0.4)")
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h3 style="margin: 0; color: #f8fafc;">Typing Speed Test</h3>
+                <div style="color: #ff3399; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">SPEED & ACCURACY BENCHMARK</div>
+            </div>
+        </div>
+        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+            Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.
+        </div>
+        """, unsafe_allow_html=True)
+        st.page_link("pages/1_Typing_Test.py", label="Launch Typing Test ➔", use_container_width=True)
 
-if 'test_active' not in st.session_state:
-    st.session_state.test_active = False
+# Card 2: Photo Resizer
+with row1_col2:
+    with st.container(border=True):
+        img_html = render_icon_html("photo_icon.png", "photo_resizer_icon_1788371609489.jpg", size=75, glow_color="rgba(0, 210, 255, 0.4)")
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h3 style="margin: 0; color: #f8fafc;">Photo Resizer</h3>
+                <div style="color: #00d2ff; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">PRECISION CROP & COMPRESS</div>
+            </div>
+        </div>
+        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+            Interactive image cropper and compressor to hit exact pixel dimensions and strict KB limits.
+        </div>
+        """, unsafe_allow_html=True)
+        st.page_link("pages/2_Photo_Resizer.py", label="Launch Photo Resizer ➔", use_container_width=True)
 
-def start_test():
-    st.session_state.test_active = True
-    if "Easy" in difficulty:
-        st.session_state.pool = letters
-        st.session_state.target_count = 30
-    elif "Medium" in difficulty:
-        st.session_state.pool = words
-        st.session_state.target_count = 15
-    elif "Hard" in difficulty:
-        st.session_state.pool = sentences
-        st.session_state.target_count = 10
-    else:
-        st.session_state.pool = paragraphs
-        st.session_state.target_count = 1
+st.write("")
 
-if not st.session_state.test_active:
-    st.button("Start Typing Test", on_click=start_test, type="primary")
-else:
-    st.info("Click anywhere in the box below and start typing!")
-    pool_json = json.dumps(st.session_state.pool)
-    target_count = st.session_state.target_count
+row2_col1, row2_col2 = st.columns(2, gap="large")
 
-    js_code = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-    <style>
-        body {{ font-family: 'Inter', sans-serif; color: #e2e8f0; background: transparent; margin: 0; padding: 10px; }}
-        .sentence {{ font-size: 20px; line-height: 1.6; letter-spacing: 0.5px; margin-bottom: 20px; user-select: none; word-wrap: break-word; }}
-        .correct {{ color: #00d2ff; font-weight: bold; text-shadow: 0 0 8px rgba(0,210,255,0.4); }}
-        .current {{ text-decoration: underline; font-weight: bold; color: #ff3399; background-color: rgba(255, 51, 153, 0.2); border-radius: 3px; padding: 0 2px; }}
-        #stats {{ font-size: 20px; font-weight: bold; color: #00d2ff; line-height: 1.6; }}
-        #progress {{ font-size: 15px; color: #94a3b8; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }}
-    </style>
-    </head>
-    <body>
-        <div id="progress">Loading...</div>
-        <div id="textDisplay" class="sentence"></div>
-        <div id="stats"></div>
-        <script>
-            const pool = {pool_json};
-            const targetCount = {target_count};
-            let currentTarget = pool[Math.floor(Math.random() * pool.length)];
-            let currentIndex = 0;
-            let roundsCompleted = 0;
-            let startTime = null;
-            let totalCharactersTyped = 0;
-            let errors = 0;
-            const display = document.getElementById("textDisplay");
-            const stats = document.getElementById("stats");
-            const progress = document.getElementById("progress");
-            
-            function render() {{
-                progress.innerText = `Round: ${{roundsCompleted + 1}} / ${{targetCount}}`;
-                let html = "";
-                for (let i = 0; i < currentTarget.length; i++) {{
-                    if (i < currentIndex) {{
-                        html += `<span class="correct">${{currentTarget[i]}}</span>`;
-                    }} else if (i === currentIndex) {{
-                        html += `<span class="current">${{currentTarget[i]}}</span>`;
-                    }} else {{
-                        html += `<span>${{currentTarget[i]}}</span>`;
-                    }}
-                }}
-                display.innerHTML = html;
-            }}
-            
-            window.addEventListener("keydown", function(e) {{
-                if (roundsCompleted >= targetCount) return;
-                if (e.key === "Backspace") {{ e.preventDefault(); return; }}
-                if (e.key.length > 1) return; 
-                if (startTime === null) startTime = new Date().getTime();
-                if (e.key === currentTarget[currentIndex]) {{
-                    currentIndex++;
-                    totalCharactersTyped++;
-                }} else {{
-                    errors++;
-                }}
-                if (currentIndex === currentTarget.length) {{
-                    roundsCompleted++;
-                    if (roundsCompleted === targetCount) {{
-                        let endTime = new Date().getTime();
-                        let elapsedSeconds = (endTime - startTime) / 1000;
-                        let wpm = (totalCharactersTyped / 5) / (elapsedSeconds / 60);
-                        let accuracy = (totalCharactersTyped / (totalCharactersTyped + errors)) * 100;
-                        progress.innerText = "✨ Test Complete!";
-                        display.innerHTML = "";
-                        stats.innerHTML = `🎉 Perfect! <br> 🚀 Speed: ${{wpm.toFixed(2)}} WPM <br> 🎯 Accuracy: ${{accuracy.toFixed(2)}}%`;
-                        return;
-                    }} else {{
-                        currentTarget = pool[Math.floor(Math.random() * pool.length)];
-                        currentIndex = 0;
-                    }}
-                }}
-                render();
-            }});
-            render();
-        </script>
-    </body>
-    </html>
-    """
-    components.html(js_code, height=350)
-    if st.button("End Test / Change Difficulty", type="primary"):
-        st.session_state.test_active = False
-        st.rerun()
+# Card 3: File Organiser
+with row2_col1:
+    with st.container(border=True):
+        img_html = render_icon_html("file_icon.png", "file_organizer_icon_1788371632367.jpg", size=75, glow_color="rgba(52, 211, 153, 0.4)")
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h3 style="margin: 0; color: #f8fafc;">Desktop File Organiser</h3>
+                <div style="color: #34d399; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">STANDALONE WINDOWS APP</div>
+            </div>
+        </div>
+        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+            Standalone verified desktop app to organize messy folders on your PC into 12 clean categories.
+        </div>
+        """, unsafe_allow_html=True)
+        st.page_link("pages/3_File_Organiser.py", label="Get File Organiser ➔", use_container_width=True)
+
+# Card 4: PDF Converter
+with row2_col2:
+    with st.container(border=True):
+        img_html = render_icon_html("pdf_icon.png", "pdf_converter_icon_1788371743841.jpg", size=75, glow_color="rgba(251, 146, 60, 0.4)")
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h3 style="margin: 0; color: #f8fafc;">PDF Converter Suite</h3>
+                <div style="color: #fb923c; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">DOCUMENT TRANSFORMATION</div>
+            </div>
+        </div>
+        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+            Merge, split, extract pages, and convert documents to and from PDF seamlessly.
+        </div>
+        """, unsafe_allow_html=True)
+        st.page_link("pages/4_PDF_Converter.py", label="Open PDF Converter ➔", use_container_width=True)
