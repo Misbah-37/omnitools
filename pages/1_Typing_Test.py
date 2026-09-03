@@ -6,6 +6,12 @@ import streamlit.components.v1 as components
 import string
 import json
 from utils import render_icon_html
+# --- SEO METADATA ---
+st.set_page_config(
+    page_title="Free WPM Typing Speed Test | Ad-Free Benchmark | OmniTools",
+    page_icon="⌨️",
+    layout="wide"
+)
 top_bar1, top_bar2 = st.columns([6, 1])
 with top_bar1:
     img_html = render_icon_html("typing_icon.png", "typing_speed_icon_1788371582708.jpg", size=65, glow_color="rgba(255, 51, 153, 0.4)")
