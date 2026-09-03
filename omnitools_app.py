@@ -750,7 +750,8 @@ else:
             {img_html}
             <div>
                 <h2 style="margin: 0; color: #f8fafc;">PDF Converter Suite</h2>
-                <div style="color: #94a3b8; font-size: 0.95rem;">Merge, split, extract pages, and convert documents to and from PDF seamlessly.</div>
+                <div style="color: #34d399; font-size: 0.85rem; font-weight: bold; margin-top: 2px;">🔒 100% SECURE CLIENT-SIDE PROCESSING</div>
+                <div style="color: #94a3b8; font-size: 0.95rem;">Files are processed locally in your browser. They never touch our servers.</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -760,243 +761,207 @@ else:
 
     st.divider()
 
-    tab_img2pdf, tab_merge, tab_split, tab_extract = st.tabs([
-        "🖼️ Images to PDF",
+    # Shared CSS for all HTML components to perfectly match your Dark Theme
+    shared_css = """
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: transparent; color: #f3f4f6; display: flex; justify-content: center; padding: 0.5rem; margin: 0; }
+        .tool-container { background: #111827; border: 1px solid #374151; padding: 1.5rem; border-radius: 12px; width: 100%; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; color: #9ca3af; }
+        input[type="file"], input[type="text"] { width: 100%; padding: 0.6rem; background: #1f2937; color: #fff; border: 1px solid #374151; border-radius: 6px; box-sizing: border-box; margin-bottom: 1rem; }
+        button { background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%); color: white; border: none; padding: 0.8rem; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        #status { text-align: center; margin-top: 1rem; font-size: 0.95rem; font-weight: 600; color: #9ca3af; }
+        .download-btn { display: none; background: #10b981; text-align: center; text-decoration: none; padding: 0.8rem; border-radius: 6px; color: white; font-weight: bold; margin-top: 1rem; }
+        .download-btn:hover { background: #059669; }
+    </style>
+    """
+
+    tab_merge, tab_split, tab_extract = st.tabs([
         "📑 Merge PDFs", 
         "✂️ Split / Extract Pages", 
         "📝 Extract Text"
     ])
 
-    # ---------------- TAB 1: IMAGES TO PDF ----------------
-    with tab_img2pdf:
-        st.subheader("Convert Images to Standardized PDF")
-        st.caption("Auto-aligns orientation, standardizes page sizes (A4/Letter), and compiles images with crystal clarity.")
-        
-        uploaded_imgs = st.file_uploader(
-            "Select images to convert", 
-            type=["jpg", "jpeg", "png", "webp"], 
-            accept_multiple_files=True,
-            key="img_upload"
-        )
-        
-        if uploaded_imgs:
-            st.write(f"🖼️ Selected **{len(uploaded_imgs)}** image(s).")
-            
-            with st.expander("⚙️ Optional Page Formatting & Canvas Options", expanded=False):
-                c_opt1, c_opt2, c_opt3 = st.columns(3)
-                with c_opt1:
-                    page_size = st.selectbox("Page Size:", ["A4 (Standard)", "US Letter", "Fit to Image (Original)"], index=0)
-                with c_opt2:
-                    orientation = st.selectbox("Orientation:", ["Auto (Smart Detect)", "Force Portrait", "Force Landscape"], index=0)
-                with c_opt3:
-                    margin_choice = st.selectbox("Margins:", ["Small (10mm)", "None (Full Bleed)", "Medium (20mm)"], index=0)
-            
-            # Local self-contained processor
-            def process_canvas(image_file, p_size, orient, marg):
-                im = Image.open(image_file)
-                im = ImageOps.exif_transpose(im)
-                if im.mode in ("RGBA", "LA") or (im.mode == "P" and "transparency" in im.info):
-                    alpha = im.convert("RGBA")
-                    bg = Image.new("RGBA", alpha.size, (255, 255, 255, 255))
-                    bg.paste(alpha, mask=alpha.split()[3])
-                    im = bg.convert("RGB")
-                else:
-                    im = im.convert("RGB")
-                    
-                if p_size == "Fit to Image (Original)":
-                    return im
-                    
-                sizes = {"A4 (Standard)": (595, 842), "US Letter": (612, 792)}
-                base_w, base_h = sizes.get(p_size, (595, 842))
-                
-                if orient == "Auto (Smart Detect)":
-                    is_land = im.width > im.height
-                elif orient == "Force Landscape":
-                    is_land = True
-                else:
-                    is_land = False
-                    
-                canv_w = max(base_w, base_h) if is_land else min(base_w, base_h)
-                canv_h = min(base_w, base_h) if is_land else max(base_w, base_h)
-                
-                margins = {"None (Full Bleed)": 0, "Small (10mm)": 28, "Medium (20mm)": 56}
-                m_val = margins.get(marg, 28)
-                
-                av_w = max(10, canv_w - 2 * m_val)
-                av_h = max(10, canv_h - 2 * m_val)
-                
-                aspect = im.width / im.height
-                target_aspect = av_w / av_h
-                
-                if aspect > target_aspect:
-                    nw = av_w
-                    nh = max(1, int(av_w / aspect))
-                else:
-                    nh = av_h
-                    nw = max(1, int(av_h * aspect))
-                    
-                resized = im.resize((nw, nh), Image.Resampling.LANCZOS)
-                canvas = Image.new("RGB", (canv_w, canv_h), (255, 255, 255))
-                canvas.paste(resized, ((canv_w - nw) // 2, (canv_h - nh) // 2))
-                return canvas
-
-            if st.button("🚀 Compile & Download PDF", type="primary"):
-                with st.spinner("Processing & standardizing images..."):
-                    img_list = []
-                    for img_file in uploaded_imgs:
-                        processed_img = process_canvas(
-                            img_file, 
-                            p_size=page_size, 
-                            orient=orientation, 
-                            marg=margin_choice
-                        )
-                        img_list.append(processed_img)
-                    
-                    if img_list:
-                        pdf_buffer = io.BytesIO()
-                        img_list[0].save(
-                            pdf_buffer,
-                            format="PDF",
-                            save_all=True,
-                            append_images=img_list[1:]
-                        )
-                        pdf_buffer.seek(0)
-                        
-                        st.success(f"✅ Successfully compiled {len(img_list)} images into a standardized PDF!")
-                        st.download_button(
-                            label="⬇️ Download Compiled PDF",
-                            data=pdf_buffer,
-                            file_name="OmniTools_Compiled_Images.pdf",
-                            mime="application/pdf",
-                            type="primary"
-                        )
-
-    # ---------------- TAB 2: MERGE PDFS ----------------
+    # ---------------- TAB 1: MERGE PDFS (CLIENT-SIDE) ----------------
     with tab_merge:
-        st.subheader("Merge Multiple PDF Files")
-        st.caption("Upload 2 or more PDF files to combine them in exact order into a single document.")
-        
-        uploaded_pdfs = st.file_uploader(
-            "Select PDFs to Merge", 
-            type=["pdf"], 
-            accept_multiple_files=True,
-            key="merge_upload"
-        )
-        
-        if uploaded_pdfs and len(uploaded_pdfs) >= 2:
-            st.write(f"📄 Selected **{len(uploaded_pdfs)}** PDF files:")
-            for idx, pdf_file in enumerate(uploaded_pdfs, 1):
-                st.write(f"{idx}. `{pdf_file.name}` ({round(pdf_file.size / 1024, 1)} KB)")
-            
-            if st.button("🚀 Merge PDFs Now", type="primary"):
-                if PdfWriter is None:
-                    st.error("Please add `pypdf` to your requirements.txt to enable PDF operations.")
-                else:
-                    merger = PdfWriter()
-                    for p in uploaded_pdfs:
-                        merger.append(p)
-                    
-                    merged_output = io.BytesIO()
-                    merger.write(merged_output)
-                    merged_output.seek(0)
-                    
-                    st.success("✅ PDFs successfully merged into a single document!")
-                    st.download_button(
-                        label="⬇️ Download Merged PDF",
-                        data=merged_output,
-                        file_name="OmniTools_Merged.pdf",
-                        mime="application/pdf",
-                        type="primary"
-                    )
-        elif uploaded_pdfs:
-            st.info("💡 Please upload at least 2 PDF files to merge.")
+        merge_html = f"""
+        {shared_css}
+        <div class="tool-container">
+            <h3 style="margin-top:0; color:#fff;">Merge Multiple PDFs</h3>
+            <label>Select 2 or more PDF files (Order matters):</label>
+            <input type="file" id="mergeInput" accept=".pdf" multiple>
+            <button onclick="mergePdfs()">🚀 Merge in Browser</button>
+            <div id="status"></div>
+            <a id="downloadBtn" class="download-btn">⬇️ Download Merged PDF</a>
+        </div>
+        <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+        <script>
+            async function mergePdfs() {{
+                const files = document.getElementById('mergeInput').files;
+                const status = document.getElementById('status');
+                const btn = document.getElementById('downloadBtn');
+                
+                if (files.length < 2) {{ alert('Please select at least 2 PDF files.'); return; }}
+                
+                status.innerText = "⏳ Merging files locally... Please wait.";
+                btn.style.display = "none";
+                
+                try {{
+                    const mergedPdf = await PDFLib.PDFDocument.create();
+                    for (let i = 0; i < files.length; i++) {{
+                        const arrayBuffer = await files[i].arrayBuffer();
+                        const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => mergedPdf.addPage(page));
+                    }}
+                    const pdfBytes = await mergedPdf.save();
+                    const blob = new Blob([pdfBytes], {{ type: 'application/pdf' }});
+                    btn.href = URL.createObjectURL(blob);
+                    btn.download = "OmniTools_Merged.pdf";
+                    btn.style.display = "block";
+                    status.innerText = "✅ Merged successfully!";
+                    status.style.color = "#34d399";
+                }} catch (e) {{
+                    status.innerText = "❌ Error: " + e.message;
+                    status.style.color = "#f87171";
+                }}
+            }}
+        </script>
+        """
+        components.html(merge_html, height=350)
 
-    # ---------------- TAB 3: SPLIT / EXTRACT PAGES ----------------
+    # ---------------- TAB 2: SPLIT PDF (CLIENT-SIDE) ----------------
     with tab_split:
-        st.subheader("Split or Extract Pages from a PDF")
-        st.caption("Extract specific pages or page ranges from a large PDF document.")
-        
-        split_file = st.file_uploader("Select a PDF to Split", type=["pdf"], key="split_upload")
-        
-        if split_file:
-            if PdfReader is None:
-                st.error("Please add `pypdf` to your requirements.txt to enable PDF operations.")
-            else:
-                reader = PdfReader(split_file)
-                total_pages = len(reader.pages)
-                st.info(f"📄 **{split_file.name}** contains **{total_pages}** total page(s).")
+        split_html = f"""
+        {shared_css}
+        <div class="tool-container">
+            <h3 style="margin-top:0; color:#fff;">Extract Pages</h3>
+            <label>Select a PDF file:</label>
+            <input type="file" id="splitInput" accept=".pdf">
+            <label>Pages to extract (e.g., 1, 3-5, 8):</label>
+            <input type="text" id="rangeInput" placeholder="1-3">
+            <button onclick="splitPdf()">✂️ Extract Pages</button>
+            <div id="status"></div>
+            <a id="downloadBtn" class="download-btn">⬇️ Download Extracted PDF</a>
+        </div>
+        <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+        <script>
+            async function splitPdf() {{
+                const file = document.getElementById('splitInput').files[0];
+                const rangeStr = document.getElementById('rangeInput').value;
+                const status = document.getElementById('status');
+                const btn = document.getElementById('downloadBtn');
                 
-                page_range_str = st.text_input(
-                    "Enter pages to extract (e.g., 1, 3-5, 8):",
-                    value=f"1-{min(total_pages, 3)}",
-                    help="Use comma-separated page numbers or ranges like 1-3, 5, 7-10"
-                )
+                if (!file || !rangeStr) {{ alert('Please select a file and enter a page range.'); return; }}
                 
-                if st.button("✂️ Extract Pages", type="primary"):
-                    try:
-                        pages_to_extract = set()
-                        for part in page_range_str.split(","):
-                            part = part.strip()
-                            if "-" in part:
-                                start_p, end_p = part.split("-")
-                                for p in range(int(start_p), int(end_p) + 1):
-                                    if 1 <= p <= total_pages:
-                                        pages_to_extract.add(p - 1)
-                            else:
-                                if part.isdigit():
-                                    p = int(part)
-                                    if 1 <= p <= total_pages:
-                                        pages_to_extract.add(p - 1)
-                                        
-                        if not pages_to_extract:
-                            st.warning("Please specify a valid page range.")
-                        else:
-                            writer = PdfWriter()
-                            for p_idx in sorted(list(pages_to_extract)):
-                                writer.add_page(reader.pages[p_idx])
-                            
-                            split_output = io.BytesIO()
-                            writer.write(split_output)
-                            split_output.seek(0)
-                            
-                            st.success(f"✅ Successfully extracted {len(pages_to_extract)} page(s)!")
-                            st.download_button(
-                                label="⬇️ Download Extracted PDF",
-                                data=split_output,
-                                file_name=f"Extracted_{split_file.name}",
-                                mime="application/pdf",
-                                type="primary"
-                            )
-                    except Exception as e:
-                        st.error(f"Error parsing page ranges: {str(e)}")
+                status.innerText = "⏳ Extracting pages... Please wait.";
+                btn.style.display = "none";
+                
+                try {{
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    const totalPages = pdf.getPageCount();
+                    
+                    let pagesToExtract = new Set();
+                    const parts = rangeStr.split(',');
+                    for (let part of parts) {{
+                        part = part.trim();
+                        if (part.includes('-')) {{
+                            let [start, end] = part.split('-');
+                            start = parseInt(start); end = parseInt(end);
+                            for (let p = start; p <= end; p++) {{
+                                if (p >= 1 && p <= totalPages) pagesToExtract.add(p - 1);
+                            }}
+                        }} else {{
+                            let p = parseInt(part);
+                            if (p >= 1 && p <= totalPages) pagesToExtract.add(p - 1);
+                        }}
+                    }}
+                    
+                    if (pagesToExtract.size === 0) throw new Error("No valid pages found in range.");
+                    
+                    const newPdf = await PDFLib.PDFDocument.create();
+                    const indices = Array.from(pagesToExtract).sort((a,b) => a-b);
+                    const copiedPages = await newPdf.copyPages(pdf, indices);
+                    copiedPages.forEach((page) => newPdf.addPage(page));
+                    
+                    const pdfBytes = await newPdf.save();
+                    const blob = new Blob([pdfBytes], {{ type: 'application/pdf' }});
+                    btn.href = URL.createObjectURL(blob);
+                    btn.download = "Extracted_" + file.name;
+                    btn.style.display = "block";
+                    status.innerText = `✅ Extracted ${{indices.length}} page(s) successfully!`;
+                    status.style.color = "#34d399";
+                }} catch (e) {{
+                    status.innerText = "❌ Error: " + e.message;
+                    status.style.color = "#f87171";
+                }}
+            }}
+        </script>
+        """
+        components.html(split_html, height=450)
 
-    # ---------------- TAB 4: EXTRACT TEXT FROM PDF ----------------
+    # ---------------- TAB 3: EXTRACT TEXT (CLIENT-SIDE) ----------------
     with tab_extract:
-        st.subheader("Extract Raw Text from PDF")
-        st.caption("Instantly extract readable text content from any PDF document.")
+        extract_html = f"""
+        {shared_css}
+        <div class="tool-container">
+            <h3 style="margin-top:0; color:#fff;">Extract Raw Text</h3>
+            <label>Select a PDF file to read:</label>
+            <input type="file" id="textInput" accept=".pdf">
+            <button onclick="extractText()">📝 Read Text from PDF</button>
+            <div id="status"></div>
+            <textarea id="outputArea" readonly></textarea>
+            <a id="downloadBtn" class="download-btn">⬇️ Download Text File (.txt)</a>
+        </div>
         
-        text_pdf_file = st.file_uploader("Upload PDF to extract text", type=["pdf"], key="text_upload")
-        
-        if text_pdf_file:
-            if PdfReader is None:
-                st.error("Please add `pypdf` to your requirements.txt to enable PDF operations.")
-            else:
-                reader = PdfReader(text_pdf_file)
-                total_pages = len(reader.pages)
+        <!-- Mozilla PDF.js library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+        <script>
+            // Initialize the PDF.js worker securely from CDN
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+            
+            async function extractText() {{
+                const file = document.getElementById('textInput').files[0];
+                const status = document.getElementById('status');
+                const textArea = document.getElementById('outputArea');
+                const btn = document.getElementById('downloadBtn');
                 
-                if st.button("📝 Extract Text Now", type="primary"):
-                    extracted_text = ""
-                    for idx, page in enumerate(reader.pages, 1):
-                        page_text = page.extract_text() or "[No text found on this page]"
-                        extracted_text += f"=== PAGE {idx} / {total_pages} ===\n{page_text}\n\n"
+                if (!file) {{ alert('Please select a PDF file first.'); return; }}
+                
+                status.innerText = "⏳ Reading document... (This might take a moment)";
+                textArea.style.display = "none";
+                btn.style.display = "none";
+                
+                try {{
+                    const arrayBuffer = await file.arrayBuffer();
+                    const loadingTask = pdfjsLib.getDocument({{data: new Uint8Array(arrayBuffer)}});
+                    const pdf = await loadingTask.promise;
+                    let fullText = "";
                     
-                    st.success(f"✅ Extracted text from {total_pages} page(s)!")
-                    st.text_area("Extracted Text Preview:", value=extracted_text, height=300)
+                    for (let i = 1; i <= pdf.numPages; i++) {{
+                        status.innerText = `⏳ Extracting page ${{i}} of ${{pdf.numPages}}...`;
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(" ");
+                        fullText += `=== PAGE ${{i}} ===\\n${{pageText}}\\n\\n`;
+                    }}
                     
-                    st.download_button(
-                        label="⬇️ Download Text (.txt)",
-                        data=extracted_text.encode("utf-8"),
-                        file_name=f"{os.path.splitext(text_pdf_file.name)[0]}_extracted.txt",
-                        mime="text/plain",
-                        type="primary"
-                    )
+                    textArea.value = fullText;
+                    textArea.style.display = "block";
+                    
+                    const blob = new Blob([fullText], {{ type: 'text/plain' }});
+                    btn.href = URL.createObjectURL(blob);
+                    btn.download = file.name.replace('.pdf', '_extracted.txt');
+                    btn.style.display = "block";
+                    
+                    status.innerText = "✅ Text extraction complete!";
+                    status.style.color = "#34d399";
+                }} catch (e) {{
+                    status.innerText = "❌ Error reading PDF: " + e.message;
+                    status.style.color = "#f87171";
+                }}
+            }}
+        </script>
+        """
+        components.html(extract_html, height=550)
