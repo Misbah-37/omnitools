@@ -6,13 +6,13 @@ import json
 import io
 import os
 import base64
-from PIL import Image
+from PIL import Image, ImageOps
 try:
     from pypdf import PdfReader, PdfWriter
 except ImportError:
     PdfReader, PdfWriter = None, None
-import streamlit.components.v1 as components
 
+import streamlit.components.v1 as components
 
 # ----------------- 1. OMNITOOLS CONFIG -----------------
 st.set_page_config(
@@ -22,18 +22,18 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS: Hide Sidebar & Apply Modern Dark Theme
+# Custom CSS: Dark Theme, Glass Cards & Crisp Icons
 st.markdown("""
 <style>
-    /* Completely hide the sidebar and toggle */
-    [data-testid="stSidebar"] {
-        display: none !important;
-    }
-    section[data-testid="stSidebar"] {
-        display: none !important;
-    }
-    button[kind="header"] {
-        display: none !important;
+    /* Hide sidebar completely */
+    [data-testid="stSidebar"] { display: none !important; }
+    section[data-testid="stSidebar"] { display: none !important; }
+    button[kind="header"] { display: none !important; }
+    
+    /* Smooth Crisp Image Rendering */
+    img {
+        border-radius: 16px;
+        image-rendering: -webkit-optimize-contrast;
     }
     
     /* Dark Theme Trust Badges */
@@ -105,7 +105,7 @@ def navigate_to(page_name):
     st.session_state.current_page = page_name
     st.rerun()
 
-# Helper to find existing image path (PNG preferred, JPG fallback)
+# Helper to find existing image path
 def find_image(png_name, jpg_name):
     if os.path.exists(png_name):
         return png_name
@@ -127,7 +127,6 @@ def render_icon_html(png_name, jpg_name, size=75, glow_color="rgba(0, 210, 255, 
 # ----------------- 0. LANDING PAGE (HOME) --------------
 # =======================================================
 if st.session_state.current_page == "Home":
-    # 1. Centered Master Hero with Floating Glowing Logo
     master_path = find_image("omnitools_logo.png", "omnitools_master_logo_1788371563646.jpg")
     master_logo_html = ""
     if master_path:
@@ -155,7 +154,7 @@ if st.session_state.current_page == "Home":
 
     st.divider()
 
-    # 2. 2x2 Grid of Floating Crystal Cards
+    # 2x2 Grid of Floating Crystal Cards
     row1_col1, row1_col2 = st.columns(2, gap="large")
 
     # Card 1: Typing Test
@@ -740,7 +739,7 @@ If Windows SmartScreen shows a blue popup:
             st.write(f"**{cat}**: `{exts}`")
 
 # =======================================================
-# ----------------- 4. PDF CONVERTER --------------------
+# ----------------- 4. PDF CONVERTER SUITE --------------
 # =======================================================
 else:
     top_bar1, top_bar2 = st.columns([6, 1])
@@ -758,13 +757,16 @@ else:
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_pdf", use_container_width=True):
             navigate_to("Home")
+
     st.divider()
+
     tab_img2pdf, tab_merge, tab_split, tab_extract = st.tabs([
         "🖼️ Images to PDF",
         "📑 Merge PDFs", 
         "✂️ Split / Extract Pages", 
         "📝 Extract Text"
     ])
+
     # ---------------- TAB 1: IMAGES TO PDF ----------------
     with tab_img2pdf:
         st.subheader("Convert Images to Standardized PDF")
@@ -837,6 +839,7 @@ else:
                 canvas = Image.new("RGB", (canv_w, canv_h), (255, 255, 255))
                 canvas.paste(resized, ((canv_w - nw) // 2, (canv_h - nh) // 2))
                 return canvas
+
             if st.button("🚀 Compile & Download PDF", type="primary"):
                 with st.spinner("Processing & standardizing images..."):
                     img_list = []
@@ -867,6 +870,7 @@ else:
                             mime="application/pdf",
                             type="primary"
                         )
+
     # ---------------- TAB 2: MERGE PDFS ----------------
     with tab_merge:
         st.subheader("Merge Multiple PDF Files")
@@ -906,6 +910,7 @@ else:
                     )
         elif uploaded_pdfs:
             st.info("💡 Please upload at least 2 PDF files to merge.")
+
     # ---------------- TAB 3: SPLIT / EXTRACT PAGES ----------------
     with tab_split:
         st.subheader("Split or Extract Pages from a PDF")
@@ -964,6 +969,7 @@ else:
                             )
                     except Exception as e:
                         st.error(f"Error parsing page ranges: {str(e)}")
+
     # ---------------- TAB 4: EXTRACT TEXT FROM PDF ----------------
     with tab_extract:
         st.subheader("Extract Raw Text from PDF")
