@@ -160,7 +160,7 @@ if st.session_state.current_page == "Home":
     # Card 2: Photo Resizer
     with row1_col2:
         with st.container(border=True):
-            img_html = render_icon_html("photo_resizer_icon_1788371609489.jpg", size=80)
+            img_html = render_icon_html("photo_icon_crisp_1788420965193.jpg", size=80)
             st.markdown(f"""
             <div style="display: flex; gap: 16px; align-items: center;">
                 {img_html}
@@ -180,7 +180,7 @@ if st.session_state.current_page == "Home":
     # Card 3: File Organiser
     with row2_col1:
         with st.container(border=True):
-            img_html = render_icon_html("file_organizer_icon_1788371632367.jpg", size=80)
+            img_html = render_icon_html("org_icon_crisp_1788420986118.jpg", size=80)
             st.markdown(f"""
             <div style="display: flex; gap: 16px; align-items: center;">
                 {img_html}
@@ -198,7 +198,7 @@ if st.session_state.current_page == "Home":
     # Card 4: PDF Converter
     with row2_col2:
         with st.container(border=True):
-            img_html = render_icon_html("pdf_converter_icon_1788371743841.jpg", size=80)
+            img_html = render_icon_html("pdf_icon_crisp_1788421007071.jpg", size=80)
             st.markdown(f"""
             <div style="display: flex; gap: 16px; align-items: center;">
                 {img_html}
@@ -219,7 +219,7 @@ if st.session_state.current_page == "Home":
 elif st.session_state.current_page == "Typing Speed Test":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        img_html = render_icon_html("typing_speed_icon_1788371582708.jpg", size=70)
+        img_html = render_icon_html("typing_icon_crisp_1788420838779.jpg", size=70)
         st.markdown(f"""
         <div style="display: flex; gap: 16px; align-items: center;">
             {img_html}
@@ -391,7 +391,7 @@ elif st.session_state.current_page == "Typing Speed Test":
 elif st.session_state.current_page == "Photo Resizer":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        img_html = render_icon_html("photo_resizer_icon_1788371609489.jpg", size=70)
+        img_html = render_icon_html("photo_icon_crisp_1788420965193.jpg", size=70)
         st.markdown(f"""
         <div style="display: flex; gap: 16px; align-items: center;">
             {img_html}
@@ -576,7 +576,7 @@ elif st.session_state.current_page == "Photo Resizer":
 elif st.session_state.current_page == "File Organiser":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        img_html = render_icon_html("file_organizer_icon_1788371632367.jpg", size=70)
+        img_html = render_icon_html("org_icon_crisp_1788420986118.jpg", size=70)
         st.markdown(f"""
         <div style="display: flex; gap: 16px; align-items: center;">
             {img_html}
@@ -684,7 +684,7 @@ If Windows SmartScreen shows a blue popup:
 else:
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        img_html = render_icon_html("pdf_converter_icon_1788371743841.jpg", size=70)
+        img_html = render_icon_html("pdf_icon_crisp_1788421007071.jpg", size=70)
         st.markdown(f"""
         <div style="display: flex; gap: 16px; align-items: center;">
             {img_html}
