@@ -4,6 +4,12 @@
 import streamlit as st
 import streamlit.components.v1 as components
 from utils import render_icon_html
+# --- SEO METADATA ---
+st.set_page_config(
+    page_title="SSC & Railway Exam Photo Resizer (20KB - 50KB) | OmniTools",
+    page_icon="📸",
+    layout="wide"
+)
 
 top_bar1, top_bar2 = st.columns([6, 1])
 with top_bar1:
