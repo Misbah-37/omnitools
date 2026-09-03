@@ -10,6 +10,7 @@ import shutil
 import zipfile
 import streamlit.components.v1 as components
 
+
 # ----------------- 1. OMNITOOLS CONFIG -----------------
 st.set_page_config(
     page_title="OmniTools | Ultimate Utility Suite", 
@@ -17,10 +18,10 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
-# Custom CSS: Hide Sidebar & Apply Modern Dark Theme
+# Custom CSS: Dark Theme, Glass Cards & Crisp Icons
 st.markdown("""
 <style>
-    /* Completely hide the sidebar and sidebar toggle */
+    /* Hide the sidebar completely */
     [data-testid="stSidebar"] {
         display: none !important;
     }
@@ -29,6 +30,12 @@ st.markdown("""
     }
     button[kind="header"] {
         display: none !important;
+    }
+    
+    /* Smooth Crisp Image Rendering */
+    img {
+        border-radius: 16px;
+        image-rendering: -webkit-optimize-contrast;
     }
     
     /* Dark Theme Trust Badges */
@@ -97,19 +104,26 @@ if "current_page" not in st.session_state:
 def navigate_to(page_name):
     st.session_state.current_page = page_name
     st.rerun()
+# Helper to render base64 images with custom styling
+def render_icon_html(image_path, size=75):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode()
+            return f"""<img src='data:image/jpeg;base64,{b64}' style='width:{size}px; height:{size}px; border-radius:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); margin-bottom: 12px; object-fit: cover;' />"""
+    return ""
 # =======================================================
 # ----------------- 0. LANDING PAGE (HOME) --------------
 # =======================================================
 if st.session_state.current_page == "Home":
-    # 1. Centered Master Hero with Glowing Logo
-    logo_html = ""
+    # Centered Master Hero with Glowing Logo
+    master_logo_html = ""
     if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
         with open("omnitools_master_logo_1788371563646.jpg", "rb") as f:
             b64_logo = base64.b64encode(f.read()).decode()
-            logo_html = f"<img src='data:image/jpeg;base64,{b64_logo}' style='width: 170px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,210,255,0.25); margin-bottom: 15px;' />"
+            master_logo_html = f"<img src='data:image/jpeg;base64,{b64_logo}' style='width: 170px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,210,255,0.25); margin-bottom: 15px;' />"
     st.markdown(f"""
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-top: 10px; margin-bottom: 20px;">
-        {logo_html}
+        {master_logo_html}
         <h1 style="margin: 0; font-size: 2.8rem; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px;">OmniTools 🌌</h1>
         <p style="color: #94a3b8; font-size: 1.15rem; max-width: 600px; margin-top: 8px; margin-bottom: 0;">High-performance, private, and lightweight utility tools for your daily workflows.</p>
     </div>
@@ -123,32 +137,42 @@ if st.session_state.current_page == "Home":
     </div>
     """, unsafe_allow_html=True)
     st.divider()
-    # 2. Perfectly Aligned 2x2 Grid of Cards
+    # 2x2 Grid of Aligned Tool Cards
     row1_col1, row1_col2 = st.columns(2, gap="large")
     # Card 1: Typing Test
     with row1_col1:
         with st.container(border=True):
-            c1, c2 = st.columns([1, 4])
-            with c1:
-                if os.path.exists("typing_speed_icon_1788371582708.jpg"):
-                    st.image("typing_speed_icon_1788371582708.jpg", width=65)
-            with c2:
-                st.markdown("<h3 style='margin:0;'>Typing Speed Test</h3>", unsafe_allow_html=True)
-                st.caption("Speed & Accuracy Benchmark")
-            st.markdown("<div style='height: 52px; color: #94a3b8; font-size: 0.95rem; margin-top: 8px;'>Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.</div>", unsafe_allow_html=True)
+            img_html = render_icon_html("typing_speed_icon_1788371582708.jpg", size=80)
+            st.markdown(f"""
+            <div style="display: flex; gap: 16px; align-items: center;">
+                {img_html}
+                <div>
+                    <h3 style="margin: 0; color: #f8fafc;">Typing Speed Test</h3>
+                    <div style="color: #00d2ff; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">SPEED & ACCURACY BENCHMARK</div>
+                </div>
+            </div>
+            <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+                Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.
+            </div>
+            """, unsafe_allow_html=True)
             if st.button("Launch Typing Test ➔", key="btn_type", use_container_width=True):
                 navigate_to("Typing Speed Test")
     # Card 2: Photo Resizer
     with row1_col2:
         with st.container(border=True):
-            c1, c2 = st.columns([1, 4])
-            with c1:
-                if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
-                    st.image("photo_resizer_icon_1788371609489.jpg", width=65)
-            with c2:
-                st.markdown("<h3 style='margin:0;'>Photo Resizer</h3>", unsafe_allow_html=True)
-                st.caption("Precision Crop & Compress")
-            st.markdown("<div style='height: 52px; color: #94a3b8; font-size: 0.95rem; margin-top: 8px;'>Interactive image cropper and compressor to hit exact pixel dimensions and strict KB limits.</div>", unsafe_allow_html=True)
+            img_html = render_icon_html("photo_resizer_icon_1788371609489.jpg", size=80)
+            st.markdown(f"""
+            <div style="display: flex; gap: 16px; align-items: center;">
+                {img_html}
+                <div>
+                    <h3 style="margin: 0; color: #f8fafc;">Photo Resizer</h3>
+                    <div style="color: #00d2ff; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">PRECISION CROP & COMPRESS</div>
+                </div>
+            </div>
+            <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+                Interactive image cropper and compressor to hit exact pixel dimensions and strict KB limits.
+            </div>
+            """, unsafe_allow_html=True)
             if st.button("Launch Photo Resizer ➔", key="btn_photo", use_container_width=True):
                 navigate_to("Photo Resizer")
     st.write("")
@@ -156,27 +180,37 @@ if st.session_state.current_page == "Home":
     # Card 3: File Organiser
     with row2_col1:
         with st.container(border=True):
-            c1, c2 = st.columns([1, 4])
-            with c1:
-                if os.path.exists("file_organizer_icon_1788371632367.jpg"):
-                    st.image("file_organizer_icon_1788371632367.jpg", width=65)
-            with c2:
-                st.markdown("<h3 style='margin:0;'>Desktop File Organiser</h3>", unsafe_allow_html=True)
-                st.caption("Standalone Windows Utility")
-            st.markdown("<div style='height: 52px; color: #94a3b8; font-size: 0.95rem; margin-top: 8px;'>Standalone verified desktop app to organize messy folders on your PC into 12 clean categories.</div>", unsafe_allow_html=True)
+            img_html = render_icon_html("file_organizer_icon_1788371632367.jpg", size=80)
+            st.markdown(f"""
+            <div style="display: flex; gap: 16px; align-items: center;">
+                {img_html}
+                <div>
+                    <h3 style="margin: 0; color: #f8fafc;">Desktop File Organiser</h3>
+                    <div style="color: #34d399; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">STANDALONE WINDOWS APP</div>
+                </div>
+            </div>
+            <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+                Standalone verified desktop app to organize messy folders on your PC into 12 clean categories.
+            </div>
+            """, unsafe_allow_html=True)
             if st.button("Get File Organiser ➔", key="btn_org", use_container_width=True):
                 navigate_to("File Organiser")
     # Card 4: PDF Converter
     with row2_col2:
         with st.container(border=True):
-            c1, c2 = st.columns([1, 4])
-            with c1:
-                if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
-                    st.image("pdf_converter_icon_1788371743841.jpg", width=65)
-            with c2:
-                st.markdown("<h3 style='margin:0;'>PDF Converter Suite</h3>", unsafe_allow_html=True)
-                st.caption("Document Transformation")
-            st.markdown("<div style='height: 52px; color: #94a3b8; font-size: 0.95rem; margin-top: 8px;'>Merge, split, extract pages, and convert documents to and from PDF seamlessly.</div>", unsafe_allow_html=True)
+            img_html = render_icon_html("pdf_converter_icon_1788371743841.jpg", size=80)
+            st.markdown(f"""
+            <div style="display: flex; gap: 16px; align-items: center;">
+                {img_html}
+                <div>
+                    <h3 style="margin: 0; color: #f8fafc;">PDF Converter Suite</h3>
+                    <div style="color: #fb923c; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">DOCUMENT TRANSFORMATION</div>
+                </div>
+            </div>
+            <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+                Merge, split, extract pages, and convert documents to and from PDF seamlessly.
+            </div>
+            """, unsafe_allow_html=True)
             if st.button("Open PDF Converter ➔", key="btn_pdf", use_container_width=True):
                 navigate_to("PDF Converter")
 # =======================================================
@@ -185,13 +219,16 @@ if st.session_state.current_page == "Home":
 elif st.session_state.current_page == "Typing Speed Test":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        c_icon, c_head = st.columns([1, 10])
-        with c_icon:
-            if os.path.exists("typing_speed_icon_1788371582708.jpg"):
-                st.image("typing_speed_icon_1788371582708.jpg", width=65)
-        with c_head:
-            st.markdown("<h2 style='margin:0;'>Typing Speed Test</h2>", unsafe_allow_html=True)
-            st.caption("Test your typing speed and accuracy in real-time.")
+        img_html = render_icon_html("typing_speed_icon_1788371582708.jpg", size=70)
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h2 style="margin: 0; color: #f8fafc;">Typing Speed Test</h2>
+                <div style="color: #94a3b8; font-size: 0.95rem;">Test your typing speed and accuracy in real-time.</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_type", use_container_width=True):
             navigate_to("Home")
@@ -354,13 +391,16 @@ elif st.session_state.current_page == "Typing Speed Test":
 elif st.session_state.current_page == "Photo Resizer":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        c_icon, c_head = st.columns([1, 10])
-        with c_icon:
-            if os.path.exists("photo_resizer_icon_1788371609489.jpg"):
-                st.image("photo_resizer_icon_1788371609489.jpg", width=65)
-        with c_head:
-            st.markdown("<h2 style='margin:0;'>Exam Photo Resizer</h2>", unsafe_allow_html=True)
-            st.caption("Crop, resize to specific pixel dimensions, and compress within exact KB constraints.")
+        img_html = render_icon_html("photo_resizer_icon_1788371609489.jpg", size=70)
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h2 style="margin: 0; color: #f8fafc;">Exam Photo Resizer</h2>
+                <div style="color: #94a3b8; font-size: 0.95rem;">Crop, resize to specific pixel dimensions, and compress within exact KB constraints.</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_photo", use_container_width=True):
             navigate_to("Home")
@@ -536,13 +576,16 @@ elif st.session_state.current_page == "Photo Resizer":
 elif st.session_state.current_page == "File Organiser":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        c_icon, c_head = st.columns([1, 10])
-        with c_icon:
-            if os.path.exists("file_organizer_icon_1788371632367.jpg"):
-                st.image("file_organizer_icon_1788371632367.jpg", width=65)
-        with c_head:
-            st.markdown("<h2 style='margin:0;'>Desktop File Organiser</h2>", unsafe_allow_html=True)
-            st.caption("A secure, standalone desktop utility to organize any folder on your computer in a single click.")
+        img_html = render_icon_html("file_organizer_icon_1788371632367.jpg", size=70)
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h2 style="margin: 0; color: #f8fafc;">Desktop File Organiser</h2>
+                <div style="color: #94a3b8; font-size: 0.95rem;">A secure, standalone desktop utility to organize any folder on your computer in a single click.</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_org", use_container_width=True):
             navigate_to("Home")
@@ -641,13 +684,16 @@ If Windows SmartScreen shows a blue popup:
 else:
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        c_icon, c_head = st.columns([1, 10])
-        with c_icon:
-            if os.path.exists("pdf_converter_icon_1788371743841.jpg"):
-                st.image("pdf_converter_icon_1788371743841.jpg", width=65)
-        with c_head:
-            st.markdown("<h2 style='margin:0;'>PDF Converter Suite</h2>", unsafe_allow_html=True)
-            st.caption("Merge, split, extract pages, and convert documents to and from PDF seamlessly.")
+        img_html = render_icon_html("pdf_converter_icon_1788371743841.jpg", size=70)
+        st.markdown(f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h2 style="margin: 0; color: #f8fafc;">PDF Converter Suite</h2>
+                <div style="color: #94a3b8; font-size: 0.95rem;">Merge, split, extract pages, and convert documents to and from PDF seamlessly.</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_pdf", use_container_width=True):
             navigate_to("Home")
