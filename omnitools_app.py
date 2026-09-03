@@ -6,8 +6,11 @@ import json
 import io
 import os
 import base64
-import shutil
-import zipfile
+from PIL import Image
+try:
+    from pypdf import PdfReader, PdfWriter
+except ImportError:
+    PdfReader, PdfWriter = None, None
 import streamlit.components.v1 as components
 
 
@@ -757,4 +760,175 @@ else:
             navigate_to("Home")
 
     st.divider()
-    st.info("Status: Under Construction")
+    tab_merge, tab_split, tab_img2pdf, tab_extract = st.tabs([
+        "📑 Merge PDFs", 
+        "✂️ Split / Extract Pages", 
+        "🖼️ Images to PDF", 
+        "📝 Extract Text"
+    ])
+    # ---------------- TAB 1: MERGE PDFS ----------------
+    with tab_merge:
+        st.subheader("Merge Multiple PDF Files")
+        st.caption("Upload 2 or more PDF files to combine them in exact order into a single document.")
+        
+        uploaded_pdfs = st.file_uploader(
+            "Select PDFs to Merge", 
+            type=["pdf"], 
+            accept_multiple_files=True,
+            key="merge_upload"
+        )
+        
+        if uploaded_pdfs and len(uploaded_pdfs) >= 2:
+            st.write(f"📄 Selected **{len(uploaded_pdfs)}** PDF files:")
+            for idx, pdf_file in enumerate(uploaded_pdfs, 1):
+                st.write(f"{idx}. `{pdf_file.name}` ({round(pdf_file.size / 1024, 1)} KB)")
+            
+            if st.button("🚀 Merge PDFs Now", type="primary"):
+                if PdfWriter is None:
+                    st.error("Please add `pypdf` to your requirements.txt to enable PDF operations.")
+                else:
+                    merger = PdfWriter()
+                    for p in uploaded_pdfs:
+                        merger.append(p)
+                    
+                    merged_output = io.BytesIO()
+                    merger.write(merged_output)
+                    merged_output.seek(0)
+                    
+                    st.success("✅ PDFs successfully merged into a single document!")
+                    st.download_button(
+                        label="⬇️ Download Merged PDF",
+                        data=merged_output,
+                        file_name="OmniTools_Merged.pdf",
+                        mime="application/pdf",
+                        type="primary"
+                    )
+        elif uploaded_pdfs:
+            st.info("💡 Please upload at least 2 PDF files to merge.")
+    # ---------------- TAB 2: SPLIT / EXTRACT PAGES ----------------
+    with tab_split:
+        st.subheader("Split or Extract Pages from a PDF")
+        st.caption("Extract specific pages or page ranges from a large PDF document.")
+        
+        split_file = st.file_uploader("Select a PDF to Split", type=["pdf"], key="split_upload")
+        
+        if split_file:
+            if PdfReader is None:
+                st.error("Please add `pypdf` to your requirements.txt to enable PDF operations.")
+            else:
+                reader = PdfReader(split_file)
+                total_pages = len(reader.pages)
+                st.info(f"📄 **{split_file.name}** contains **{total_pages}** total page(s).")
+                
+                page_range_str = st.text_input(
+                    "Enter pages to extract (e.g., 1, 3-5, 8):",
+                    value=f"1-{min(total_pages, 3)}",
+                    help="Use comma-separated page numbers or ranges like 1-3, 5, 7-10"
+                )
+                
+                if st.button("✂️ Extract Pages", type="primary"):
+                    try:
+                        pages_to_extract = set()
+                        for part in page_range_str.split(","):
+                            part = part.strip()
+                            if "-" in part:
+                                start_p, end_p = part.split("-")
+                                for p in range(int(start_p), int(end_p) + 1):
+                                    if 1 <= p <= total_pages:
+                                        pages_to_extract.add(p - 1)
+                            else:
+                                if part.isdigit():
+                                    p = int(part)
+                                    if 1 <= p <= total_pages:
+                                        pages_to_extract.add(p - 1)
+                                        
+                        if not pages_to_extract:
+                            st.warning("Please specify a valid page range.")
+                        else:
+                            writer = PdfWriter()
+                            for p_idx in sorted(list(pages_to_extract)):
+                                writer.add_page(reader.pages[p_idx])
+                            
+                            split_output = io.BytesIO()
+                            writer.write(split_output)
+                            split_output.seek(0)
+                            
+                            st.success(f"✅ Successfully extracted {len(pages_to_extract)} page(s)!")
+                            st.download_button(
+                                label="⬇️ Download Extracted PDF",
+                                data=split_output,
+                                file_name=f"Extracted_{split_file.name}",
+                                mime="application/pdf",
+                                type="primary"
+                            )
+                    except Exception as e:
+                        st.error(f"Error parsing page ranges: {str(e)}")
+    # ---------------- TAB 3: IMAGES TO PDF ----------------
+    with tab_img2pdf:
+        st.subheader("Convert Images to PDF")
+        st.caption("Convert multiple images (JPG, PNG, WebP) into a high-quality, compiled PDF document.")
+        
+        uploaded_imgs = st.file_uploader(
+            "Upload images to convert", 
+            type=["jpg", "jpeg", "png", "webp"], 
+            accept_multiple_files=True,
+            key="img_upload"
+        )
+        
+        if uploaded_imgs:
+            st.write(f"🖼️ Selected **{len(uploaded_imgs)}** image(s).")
+            
+            if st.button("📄 Convert to PDF", type="primary"):
+                img_list = []
+                for img_file in uploaded_imgs:
+                    img = Image.open(img_file).convert("RGB")
+                    img_list.append(img)
+                
+                if img_list:
+                    pdf_buffer = io.BytesIO()
+                    img_list[0].save(
+                        pdf_buffer,
+                        format="PDF",
+                        save_all=True,
+                        append_images=img_list[1:]
+                    )
+                    pdf_buffer.seek(0)
+                    
+                    st.success(f"✅ Successfully converted {len(img_list)} images into PDF!")
+                    st.download_button(
+                        label="⬇️ Download Compiled PDF",
+                        data=pdf_buffer,
+                        file_name="Images_Compiled.pdf",
+                        mime="application/pdf",
+                        type="primary"
+                    )
+    # ---------------- TAB 4: EXTRACT TEXT FROM PDF ----------------
+    with tab_extract:
+        st.subheader("Extract Raw Text from PDF")
+        st.caption("Instantly extract readable text content from any PDF document.")
+        
+        text_pdf_file = st.file_uploader("Upload PDF to extract text", type=["pdf"], key="text_upload")
+        
+        if text_pdf_file:
+            if PdfReader is None:
+                st.error("Please add `pypdf` to your requirements.txt to enable PDF operations.")
+            else:
+                reader = PdfReader(text_pdf_file)
+                total_pages = len(reader.pages)
+                
+                if st.button("📝 Extract Text Now", type="primary"):
+                    extracted_text = ""
+                    for idx, page in enumerate(reader.pages, 1):
+                        page_text = page.extract_text() or "[No text found on this page]"
+                        extracted_text += f"=== PAGE {idx} / {total_pages} ===\n{page_text}\n\n"
+                    
+                    st.success(f"✅ Extracted text from {total_pages} page(s)!")
+                    st.text_area("Extracted Text Preview:", value=extracted_text, height=300)
+                    
+                    st.download_button(
+                        label="⬇️ Download Text (.txt)",
+                        data=extracted_text.encode("utf-8"),
+                        file_name=f"{os.path.splitext(text_pdf_file.name)[0]}_extracted.txt",
+                        mime="text/plain",
+                        type="primary"
+                    )
