@@ -18,10 +18,11 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
-# Custom CSS: Dark Theme, Glass Cards & Crisp Icons
+
+# Custom CSS: Hide Sidebar & Apply Modern Dark Theme
 st.markdown("""
 <style>
-    /* Hide the sidebar completely */
+    /* Completely hide the sidebar and toggle */
     [data-testid="stSidebar"] {
         display: none !important;
     }
@@ -30,12 +31,6 @@ st.markdown("""
     }
     button[kind="header"] {
         display: none !important;
-    }
-    
-    /* Smooth Crisp Image Rendering */
-    img {
-        border-radius: 16px;
-        image-rendering: -webkit-optimize-contrast;
     }
     
     /* Dark Theme Trust Badges */
@@ -98,29 +93,46 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
 # ----------------- PAGE ROUTER STATE -----------------
 if "current_page" not in st.session_state:
     st.session_state.current_page = "Home"
+
 def navigate_to(page_name):
     st.session_state.current_page = page_name
     st.rerun()
-# Helper to render base64 images with custom styling
-def render_icon_html(image_path, size=75):
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as f:
+
+# Helper to find existing image path (PNG preferred, JPG fallback)
+def find_image(png_name, jpg_name):
+    if os.path.exists(png_name):
+        return png_name
+    if os.path.exists(jpg_name):
+        return jpg_name
+    return None
+
+# Helper to render transparent icon with glowing drop-shadow
+def render_icon_html(png_name, jpg_name, size=75, glow_color="rgba(0, 210, 255, 0.4)"):
+    path = find_image(png_name, jpg_name)
+    if path:
+        with open(path, "rb") as f:
             b64 = base64.b64encode(f.read()).decode()
-            return f"""<img src='data:image/jpeg;base64,{b64}' style='width:{size}px; height:{size}px; border-radius:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); margin-bottom: 12px; object-fit: cover;' />"""
+            mime = "image/png" if path.endswith(".png") else "image/jpeg"
+            return f"""<img src='data:{mime};base64,{b64}' style='width:{size}px; height:{size}px; filter: drop-shadow(0 8px 16px {glow_color}); margin-bottom: 8px; object-fit: contain;' />"""
     return ""
+
 # =======================================================
 # ----------------- 0. LANDING PAGE (HOME) --------------
 # =======================================================
 if st.session_state.current_page == "Home":
-    # Centered Master Hero with Glowing Logo
+    # 1. Centered Master Hero with Floating Glowing Logo
+    master_path = find_image("omnitools_logo.png", "omnitools_master_logo_1788371563646.jpg")
     master_logo_html = ""
-    if os.path.exists("omnitools_master_logo_1788371563646.jpg"):
-        with open("omnitools_master_logo_1788371563646.jpg", "rb") as f:
+    if master_path:
+        with open(master_path, "rb") as f:
             b64_logo = base64.b64encode(f.read()).decode()
-            master_logo_html = f"<img src='data:image/jpeg;base64,{b64_logo}' style='width: 170px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,210,255,0.25); margin-bottom: 15px;' />"
+            mime = "image/png" if master_path.endswith(".png") else "image/jpeg"
+            master_logo_html = f"<img src='data:{mime};base64,{b64_logo}' style='width: 175px; filter: drop-shadow(0 12px 28px rgba(0, 210, 255, 0.45)); margin-bottom: 15px;' />"
+
     st.markdown(f"""
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-top: 10px; margin-bottom: 20px;">
         {master_logo_html}
@@ -128,6 +140,7 @@ if st.session_state.current_page == "Home":
         <p style="color: #94a3b8; font-size: 1.15rem; max-width: 600px; margin-top: 8px; margin-bottom: 0;">High-performance, private, and lightweight utility tools for your daily workflows.</p>
     </div>
     """, unsafe_allow_html=True)
+
     st.markdown("""
     <div class="trust-badge-container">
         <span class="trust-badge">⚡ Ultra Fast Execution</span>
@@ -136,19 +149,22 @@ if st.session_state.current_page == "Home":
         <span class="trust-badge">🚀 Zero Installation Required</span>
     </div>
     """, unsafe_allow_html=True)
+
     st.divider()
-    # 2x2 Grid of Aligned Tool Cards
+
+    # 2. 2x2 Grid of Floating Crystal Cards
     row1_col1, row1_col2 = st.columns(2, gap="large")
+
     # Card 1: Typing Test
     with row1_col1:
         with st.container(border=True):
-            img_html = render_icon_html("typing_icon_crisp_1788420838779.jpg", size=80)
+            img_html = render_icon_html("typing_icon.png", "typing_speed_icon_1788371582708.jpg", size=75, glow_color="rgba(255, 51, 153, 0.4)")
             st.markdown(f"""
             <div style="display: flex; gap: 16px; align-items: center;">
                 {img_html}
                 <div>
                     <h3 style="margin: 0; color: #f8fafc;">Typing Speed Test</h3>
-                    <div style="color: #00d2ff; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">SPEED & ACCURACY BENCHMARK</div>
+                    <div style="color: #ff3399; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">SPEED & ACCURACY BENCHMARK</div>
                 </div>
             </div>
             <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
@@ -157,10 +173,11 @@ if st.session_state.current_page == "Home":
             """, unsafe_allow_html=True)
             if st.button("Launch Typing Test ➔", key="btn_type", use_container_width=True):
                 navigate_to("Typing Speed Test")
+
     # Card 2: Photo Resizer
     with row1_col2:
         with st.container(border=True):
-            img_html = render_icon_html("photo_icon_crisp_1788420965193.jpg", size=80)
+            img_html = render_icon_html("photo_icon.png", "photo_resizer_icon_1788371609489.jpg", size=75, glow_color="rgba(0, 210, 255, 0.4)")
             st.markdown(f"""
             <div style="display: flex; gap: 16px; align-items: center;">
                 {img_html}
@@ -175,12 +192,15 @@ if st.session_state.current_page == "Home":
             """, unsafe_allow_html=True)
             if st.button("Launch Photo Resizer ➔", key="btn_photo", use_container_width=True):
                 navigate_to("Photo Resizer")
+
     st.write("")
+
     row2_col1, row2_col2 = st.columns(2, gap="large")
+
     # Card 3: File Organiser
     with row2_col1:
         with st.container(border=True):
-            img_html = render_icon_html("org_icon_crisp_1788420986118.jpg", size=80)
+            img_html = render_icon_html("file_icon.png", "file_organizer_icon_1788371632367.jpg", size=75, glow_color="rgba(52, 211, 153, 0.4)")
             st.markdown(f"""
             <div style="display: flex; gap: 16px; align-items: center;">
                 {img_html}
@@ -195,10 +215,11 @@ if st.session_state.current_page == "Home":
             """, unsafe_allow_html=True)
             if st.button("Get File Organiser ➔", key="btn_org", use_container_width=True):
                 navigate_to("File Organiser")
+
     # Card 4: PDF Converter
     with row2_col2:
         with st.container(border=True):
-            img_html = render_icon_html("pdf_icon_crisp_1788421007071.jpg", size=80)
+            img_html = render_icon_html("pdf_icon.png", "pdf_converter_icon_1788371743841.jpg", size=75, glow_color="rgba(251, 146, 60, 0.4)")
             st.markdown(f"""
             <div style="display: flex; gap: 16px; align-items: center;">
                 {img_html}
@@ -213,13 +234,14 @@ if st.session_state.current_page == "Home":
             """, unsafe_allow_html=True)
             if st.button("Open PDF Converter ➔", key="btn_pdf", use_container_width=True):
                 navigate_to("PDF Converter")
+
 # =======================================================
 # ----------------- 1. TYPING SPEED TEST ----------------
 # =======================================================
 elif st.session_state.current_page == "Typing Speed Test":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        img_html = render_icon_html("typing_icon_crisp_1788420838779.jpg", size=70)
+        img_html = render_icon_html("typing_icon.png", "typing_speed_icon_1788371582708.jpg", size=65, glow_color="rgba(255, 51, 153, 0.4)")
         st.markdown(f"""
         <div style="display: flex; gap: 16px; align-items: center;">
             {img_html}
@@ -232,7 +254,9 @@ elif st.session_state.current_page == "Typing Speed Test":
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_type", use_container_width=True):
             navigate_to("Home")
+
     st.divider()
+
     letters = list(string.ascii_lowercase + string.digits + "!@#$%^&*()_+-=[]{}|;':,.<>/?`~ ")
     words = [
         "apple", "banana", "table", "chair", "mountain", "river", "ocean", "space", "rocket",
@@ -276,12 +300,15 @@ elif st.session_state.current_page == "Typing Speed Test":
         "Coding is equal parts logic and creativity. Whether building a simple calculator, designing an interactive game, or training a machine learning model, programming gives you the power to bring abstract ideas into tangible reality.",
         "Master the art of finishing what you start. While starting new projects is exciting, the true satisfaction and growth come from pushing through the messy middle and bringing your work across the finish line."
     ]
+
     difficulty = st.radio(
         "Choose Difficulty:", 
         ["1. Easy (30 Letters)", "2. Medium (15 Words)", "3. Hard (10 Sentences)", "4. Expert (1 Paragraph)"]
     )
+
     if 'test_active' not in st.session_state:
         st.session_state.test_active = False
+
     def start_test():
         st.session_state.test_active = True
         if "Easy" in difficulty:
@@ -296,12 +323,14 @@ elif st.session_state.current_page == "Typing Speed Test":
         else:
             st.session_state.pool = paragraphs
             st.session_state.target_count = 1
+
     if not st.session_state.test_active:
         st.button("Start Typing Test", on_click=start_test, type="primary")
     else:
         st.info("Click anywhere in the box below and start typing!")
         pool_json = json.dumps(st.session_state.pool)
         target_count = st.session_state.target_count
+
         js_code = f"""
         <!DOCTYPE html>
         <html>
@@ -385,13 +414,14 @@ elif st.session_state.current_page == "Typing Speed Test":
         if st.button("End Test / Change Difficulty", type="primary"):
             st.session_state.test_active = False
             st.rerun()
+
 # =======================================================
 # ----------------- 2. PHOTO RESIZER --------------------
 # =======================================================
 elif st.session_state.current_page == "Photo Resizer":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        img_html = render_icon_html("photo_icon_crisp_1788420965193.jpg", size=70)
+        img_html = render_icon_html("photo_icon.png", "photo_resizer_icon_1788371609489.jpg", size=65, glow_color="rgba(0, 210, 255, 0.4)")
         st.markdown(f"""
         <div style="display: flex; gap: 16px; align-items: center;">
             {img_html}
@@ -404,7 +434,9 @@ elif st.session_state.current_page == "Photo Resizer":
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_photo", use_container_width=True):
             navigate_to("Home")
+
     st.divider()
+
     photo_resizer_html = """
     <!DOCTYPE html>
     <html lang="en">
@@ -461,6 +493,7 @@ elif st.session_state.current_page == "Photo Resizer":
         <div id="status"></div>
         <a id="downloadBtn" download="OmniTools_Ready.jpg">Download Resized Photo</a>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script>
         let cropper;
@@ -469,6 +502,7 @@ elif st.session_state.current_page == "Photo Resizer":
         const processBtn = document.getElementById('processBtn');
         const widthInput = document.getElementById('widthInput');
         const heightInput = document.getElementById('heightInput');
+
         document.getElementById('imageInput').addEventListener('change', function(e) {
             const files = e.target.files;
             if (files && files.length > 0) {
@@ -477,7 +511,9 @@ elif st.session_state.current_page == "Photo Resizer":
                 imageToCrop.src = url;
                 cropContainer.style.display = 'block';
                 processBtn.style.display = 'block';
+
                 if (cropper) cropper.destroy();
+
                 const targetRatio = parseInt(widthInput.value) / parseInt(heightInput.value);
                 cropper = new Cropper(imageToCrop, {
                     aspectRatio: targetRatio,
@@ -489,15 +525,18 @@ elif st.session_state.current_page == "Photo Resizer":
                 document.getElementById('downloadBtn').style.display = "none";
             }
         });
+
         function updateAspectRatio() {
             if (cropper) {
                 const newRatio = parseInt(widthInput.value) / parseInt(heightInput.value);
                 cropper.setAspectRatio(newRatio);
             }
         }
+
         const getBlob = (canvas, quality) => {
             return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
         };
+
         function showSuccess(blob, statusEl, downloadBtn) {
             statusEl.innerText = `✅ Success! Final Size: ${(blob.size / 1024).toFixed(1)} KB`;
             statusEl.style.color = "#34d399";
@@ -505,6 +544,7 @@ elif st.session_state.current_page == "Photo Resizer":
             downloadBtn.href = url;
             downloadBtn.style.display = "block";
         }
+
         async function processAndCompress() {
             if (!cropper) return;
             const targetWidth = parseInt(widthInput.value);
@@ -513,13 +553,16 @@ elif st.session_state.current_page == "Photo Resizer":
             const maxBytes = parseFloat(document.getElementById('maxKbInput').value) * 1024;
             const statusEl = document.getElementById('status');
             const downloadBtn = document.getElementById('downloadBtn');
+
             if (minBytes >= maxBytes) {
                 alert("Maximum KB must be greater than Minimum KB.");
                 return;
             }
+
             statusEl.innerText = "Calculating perfect compression...";
             statusEl.style.color = "#94a3b8";
             downloadBtn.style.display = "none";
+
             const croppedCanvas = cropper.getCroppedCanvas();
             const finalCanvas = document.createElement('canvas');
             finalCanvas.width = targetWidth;
@@ -528,6 +571,7 @@ elif st.session_state.current_page == "Photo Resizer":
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(0, 0, targetWidth, targetHeight);
             ctx.drawImage(croppedCanvas, 0, 0, targetWidth, targetHeight);
+
             let blob = await getBlob(finalCanvas, 1.0);
             if (blob.size < minBytes) {
                 statusEl.innerText = `Error: Image is too small (${(blob.size/1024).toFixed(1)} KB) even at maximum quality. Upload a higher resolution photo.`;
@@ -537,12 +581,14 @@ elif st.session_state.current_page == "Photo Resizer":
             if (blob.size <= maxBytes) {
                 return showSuccess(blob, statusEl, downloadBtn);
             }
+
             let minBlob = await getBlob(finalCanvas, 0.01);
             if (minBlob.size > maxBytes) {
                 statusEl.innerText = `Error: Cannot compress enough. Minimum possible size is ${(minBlob.size/1024).toFixed(1)} KB.`;
                 statusEl.style.color = "#f87171";
                 return;
             }
+
             let min_q = 0.01, max_q = 1.0, best_blob = null;
             for (let i = 0; i < 15; i++) {
                 let q = (min_q + max_q) / 2;
@@ -570,13 +616,14 @@ elif st.session_state.current_page == "Photo Resizer":
     </html>
     """
     components.html(photo_resizer_html, height=800, scrolling=True)
+
 # =======================================================
 # ----------------- 3. FILE ORGANISER -------------------
 # =======================================================
 elif st.session_state.current_page == "File Organiser":
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        img_html = render_icon_html("org_icon_crisp_1788420986118.jpg", size=70)
+        img_html = render_icon_html("file_icon.png", "file_organizer_icon_1788371632367.jpg", size=65, glow_color="rgba(52, 211, 153, 0.4)")
         st.markdown(f"""
         <div style="display: flex; gap: 16px; align-items: center;">
             {img_html}
@@ -589,7 +636,9 @@ elif st.session_state.current_page == "File Organiser":
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_org", use_container_width=True):
             navigate_to("Home")
+
     st.divider()
+
     st.markdown("""
     <div class="trust-badge-container">
         <span class="trust-badge">🛡️ Verified Malware-Free</span>
@@ -598,6 +647,7 @@ elif st.session_state.current_page == "File Organiser":
         <span class="trust-badge">💻 Windows 10/11 Certified</span>
     </div>
     """, unsafe_allow_html=True)
+
     st.markdown("""
     <div class="cert-box">
         <div class="cert-header">
@@ -617,10 +667,13 @@ elif st.session_state.current_page == "File Organiser":
         </div>
     </div>
     """, unsafe_allow_html=True)
+
     col1, col2 = st.columns([3, 2])
+
     with col1:
         st.subheader("⚡ Download & Quick Start")
         st.write("Because web browsers restrict direct file movement on user hard drives, this dedicated **Windows Desktop Utility** provides full native folder access safely.")
+
         zip_filename = "File_Organizer.zip"
         if os.path.exists(zip_filename):
             with open(zip_filename, "rb") as f:
@@ -639,12 +692,14 @@ elif st.session_state.current_page == "File Organiser":
                 disabled=True,
                 help="Upload File_Organizer.zip to your GitHub repo to activate."
             )
+
         st.warning("""
 **First-time Windows Launch Note:**  
 If Windows SmartScreen shows a blue popup:  
 👉 Click **More info** ➔ Click **Run anyway**.  
 *(This appears because the app is an independent open-source tool without a corporate certificate).*
 """)
+
         st.markdown("""
         #### 📌 How to use:
         1. **Download** `File_Organizer.zip` above and extract it.
@@ -652,6 +707,7 @@ If Windows SmartScreen shows a blue popup:
         3. Click **Browse** and select any messy folder (e.g. `Downloads` or `Desktop`).
         4. Click **Organize!** and watch your files get sorted instantly.
         """)
+
     with col2:
         st.subheader("✨ Key Features")
         st.markdown("""
@@ -660,6 +716,7 @@ If Windows SmartScreen shows a blue popup:
         - 🔒 **Complete Privacy**: Operates 100% locally with zero internet communication.
         - 🚀 **Portable & Lightweight**: Single executable file under 20MB.
         """)
+
     st.divider()
     with st.expander("📁 View Supported File Categories & Extensions"):
         categories = {
@@ -678,13 +735,14 @@ If Windows SmartScreen shows a blue popup:
         }
         for cat, exts in categories.items():
             st.write(f"**{cat}**: `{exts}`")
+
 # =======================================================
 # ----------------- 4. PDF CONVERTER --------------------
 # =======================================================
 else:
     top_bar1, top_bar2 = st.columns([6, 1])
     with top_bar1:
-        img_html = render_icon_html("pdf_icon_crisp_1788421007071.jpg", size=70)
+        img_html = render_icon_html("pdf_icon.png", "pdf_converter_icon_1788371743841.jpg", size=65, glow_color="rgba(251, 146, 60, 0.4)")
         st.markdown(f"""
         <div style="display: flex; gap: 16px; align-items: center;">
             {img_html}
@@ -697,5 +755,6 @@ else:
     with top_bar2:
         if st.button("🏠 Back to Home", key="back_pdf", use_container_width=True):
             navigate_to("Home")
+
     st.divider()
     st.info("Status: Under Construction")
