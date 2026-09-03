@@ -102,6 +102,8 @@ st.markdown("""
 # =======================================================
 # ----------------- 0. LANDING PAGE (HOME) --------------
 # =======================================================
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "Home"
 if st.session_state.current_page == "Home":
     master_path = find_image("omnitools_logo.png", "omnitools_master_logo_1788371563646.jpg")
     master_logo_html = ""
