@@ -259,18 +259,18 @@ else:
   pool_json = json.dumps(st.session_state.pool)
   target_count = st.session_state.target_count
 
-  js_code = f"""
+  js_template = """
     <!DOCTYPE html>
     <html>
     <head>
     <style>
-        body {{ font-family: 'Inter', sans-serif; color: #e2e8f0; background: transparent; margin: 0; padding: 10px; }}
-        .sentence {{ font-size: 20px; line-height: 1.6; letter-spacing: 0.5px; margin-bottom: 20px; user-select: none; word-wrap: break-word; }}
-        .correct {{ color: #00d2ff; font-weight: bold; text-shadow: 0 0 8px rgba(0,210,255,0.4); }}
-        .current {{ text-decoration: underline; font-weight: bold; color: #ff3399; background-color: rgba(255, 51, 153, 0.2); border-radius: 3px; padding: 0 2px; }}
-        #stats {{ font-size: 20px; font-weight: bold; color: #00d2ff; line-height: 1.6; }}
-        #progress {{ font-size: 15px; color: #94a3b8; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }}
-        .typing-input {{
+        body { font-family: 'Inter', sans-serif; color: #e2e8f0; background: transparent; margin: 0; padding: 10px; }
+        .sentence { font-size: 20px; line-height: 1.6; letter-spacing: 0.5px; margin-bottom: 20px; user-select: none; word-wrap: break-word; }
+        .correct { color: #00d2ff; font-weight: bold; text-shadow: 0 0 8px rgba(0,210,255,0.4); }
+        .current { text-decoration: underline; font-weight: bold; color: #ff3399; background-color: rgba(255, 51, 153, 0.2); border-radius: 3px; padding: 0 2px; }
+        #stats { font-size: 20px; font-weight: bold; color: #00d2ff; line-height: 1.6; }
+        #progress { font-size: 15px; color: #94a3b8; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .typing-input {
             width: 100%;
             padding: 12px 16px;
             font-size: 18px;
@@ -281,7 +281,7 @@ else:
             outline: none;
             box-sizing: border-box;
             margin-bottom: 15px;
-        }}
+        }
     </style>
     </head>
     <body>
@@ -290,8 +290,8 @@ else:
         <input type="text" id="typingInput" class="typing-input" placeholder="Tap here and start typing..." autocomplete="off" autocapitalize="off" spellcheck="false" />
         <div id="stats"></div>
         <script>
-            const pool = {pool_json};
-            const targetCount = {target_count};
+            const pool = __POOL_JSON__;
+            const targetCount = __TARGET_COUNT__;
             let currentTarget = pool[Math.floor(Math.random() * pool.length)];
             let roundsCompleted = 0;
             let startTime = null;
@@ -303,55 +303,53 @@ else:
             const progress = document.getElementById("progress");
             const inputField = document.getElementById("typingInput");
             
-            // Auto-focus input field on load
             inputField.focus();
             
-            function render() {{
-                progress.innerText = `Round: ${{roundsCompleted + 1}} / ${{targetCount}}`;
+            function render() {
+                progress.innerText = "Round: " + (roundsCompleted + 1) + " / " + targetCount;
                 const typedText = inputField.value;
                 let html = "";
                 
-                for (let i = 0; i < currentTarget.length; i++) {{
-                    if (i < typedText.length) {{
-                        if (typedText[i] === currentTarget[i]) {{
-                            html += `<span class="correct">${{currentTarget[i]}}</span>`;
-                        }} else {{
-                            html += `<span class="current" style="color: #ef4444; background: rgba(239,68,68,0.2);">${{currentTarget[i]}}</span>`;
-                        }}
-                    }} else if (i === typedText.length) {{
-                        html += `<span class="current">${{currentTarget[i]}}</span>`;
-                    }} else {{
-                        html += `<span>${{currentTarget[i]}}</span>`;
-                    }}
-                }}
+                for (let i = 0; i < currentTarget.length; i++) {
+                    if (i < typedText.length) {
+                        if (typedText[i] === currentTarget[i]) {
+                            html += '<span class="correct">' + currentTarget[i] + '</span>';
+                        } else {
+                            html += '<span class="current" style="color: #ef4444; background: rgba(239,68,68,0.2);">' + currentTarget[i] + '</span>';
+                        }
+                    } else if (i === typedText.length) {
+                        html += '<span class="current">' + currentTarget[i] + '</span>';
+                    } else {
+                        html += '<span>' + currentTarget[i] + '</span>';
+                    }
+                }
                 display.innerHTML = html;
             }
             
-            inputField.addEventListener("input", function(e) {{
+            inputField.addEventListener("input", function(e) {
                 if (roundsCompleted >= targetCount) return;
                 
                 const typedText = inputField.value;
-                if (startTime === null && typedText.length > 0) {{
+                if (startTime === null && typedText.length > 0) {
                     startTime = new Date().getTime();
-                }}
+                }
                 
-                // Calculate errors dynamically based on current input text
                 let currentErrors = 0;
-                for (let i = 0; i < typedText.length; i++) {{
-                    if (i < currentTarget.length) {{
+                for (let i = 0; i < typedText.length; i++) {
+                    if (i < currentTarget.length) {
                         if (typedText[i] !== currentTarget[i]) currentErrors++;
-                    }} else {{
+                    } else {
                         currentErrors++;
-                    }}
-                }}
+                    }
+                }
                 errors = currentErrors;
                 
-                if (typedText === currentTarget) {{
+                if (typedText === currentTarget) {
                     roundsCompleted++;
                     totalCharactersTyped += currentTarget.length;
-                    inputField.value = ""; // Reset box for next round
+                    inputField.value = "";
                     
-                    if (roundsCompleted === targetCount) {{
+                    if (roundsCompleted === targetCount) {
                         let endTime = new Date().getTime();
                         let elapsedSeconds = (endTime - startTime) / 1000;
                         let wpm = (totalCharactersTyped / 5) / (elapsedSeconds / 60);
@@ -359,20 +357,26 @@ else:
                         progress.innerText = "✨ Test Complete!";
                         display.innerHTML = "";
                         inputField.style.display = "none";
-                        stats.innerHTML = `🎉 Perfect! <br> 🚀 Speed: ${{wpm.toFixed(2)}} WPM <br> 🎯 Accuracy: ${{accuracy.toFixed(2)}}%`;
+                        stats.innerHTML = "🎉 Perfect! <br> 🚀 Speed: " + wpm.toFixed(2) + " WPM <br> 🎯 Accuracy: " + accuracy.toFixed(2) + "%";
                         return;
-                    }} else {{
+                    } else {
                         currentTarget = pool[Math.floor(Math.random() * pool.length)];
-                    }}
-                }}
+                    }
+                }
                 render();
-            }});
+            });
             
             render();
         </script>
     </body>
     </html>
     """
+
+  # Safely inject python variables without f-string brace conflicts
+  js_code = (
+      js_template.replace("__POOL_JSON__", pool_json)
+      .replace("__TARGET_COUNT__", str(target_count))
+  )
   components.html(js_code, height=380)
 
   if st.button("End Test / Change Difficulty", type="primary"):
