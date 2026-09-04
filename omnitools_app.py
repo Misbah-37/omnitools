@@ -209,7 +209,7 @@ with row2_col2:
         """, unsafe_allow_html=True)
         st.page_link("pages/4_PDF_Converter.py", label="Open PDF Converter ➔", use_container_width=True)
 # Card 5:QR Generator 
-row3_col1, row3_col2 = st.columns(2)
+
 
 with row3_col1:
     with st.container(border=True):
