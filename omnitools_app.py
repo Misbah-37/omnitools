@@ -113,7 +113,6 @@ def redirect_button(url, label):
     """
     components.html(btn_html, height=45)
 
-
 # =======================================================
 # ----------------- 0. LANDING PAGE (HOME) --------------
 # =======================================================
@@ -164,14 +163,7 @@ with row1_col1:
             Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.
         </div>
         """, unsafe_allow_html=True)
-        st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/typing-test.html" target="_top" 
-           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
-                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
-                  margin-top: 10px; font-weight: 500;">
-           Launch Typing Test ➔
-        </a>
-        """, unsafe_allow_html=True)
+        redirect_button("https://misbah-37.github.io/omnitools-web/typing-test.html", "Launch Typing Test ➔")
 
 # Card 2: Photo Resizer
 with row1_col2:
@@ -189,14 +181,7 @@ with row1_col2:
             Interactive image cropper and compressor to hit exact pixel dimensions and strict KB limits.
         </div>
         """, unsafe_allow_html=True)
-        st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/photo-resizer.html" target="_top" 
-           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
-                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
-                  margin-top: 10px; font-weight: 500;">
-           Launch Photo Resizer ➔
-        </a>
-        """, unsafe_allow_html=True)
+        redirect_button("https://misbah-37.github.io/omnitools-web/photo-resizer.html", "Launch Photo Resizer ➔")
 
 st.write("")
 
@@ -218,14 +203,7 @@ with row2_col1:
             Standalone verified desktop app to organize messy folders on your PC into 12 clean categories.
         </div>
         """, unsafe_allow_html=True)
-        st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/file-organizer.html" target="_top" 
-           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
-                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
-                  margin-top: 10px; font-weight: 500;">
-           Get File Organiser ➔
-        </a>
-        """, unsafe_allow_html=True)
+        redirect_button("https://misbah-37.github.io/omnitools-web/file-organizer.html", "Get File Organiser ➔")
 
 # Card 4: PDF Converter
 with row2_col2:
@@ -242,6 +220,7 @@ with row2_col2:
         <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
             Merge, split, extract pages, and convert documents to and from PDF seamlessly.
         </div>
+        """, unsafe_allow_html=True)
         redirect_button("https://misbah-37.github.io/omnitools-web/pdf-converter.html", "Open PDF Converter ➔")
         
 # Card 5:QR Generator 
@@ -261,11 +240,4 @@ with row3_col1:
             Create, customize, and securely download high-quality QR codes from any URL or text.
         </div>
         """, unsafe_allow_html=True)
-        st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/qr-generator.html" target="_top" 
-           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
-                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
-                  margin-top: 10px; font-weight: 500;">
-           Open QR Generator ➔
-        </a>
-        """, unsafe_allow_html=True)
+        redirect_button("https://misbah-37.github.io/omnitools-web/qr-generator.html", "Open QR Generator ➔")
