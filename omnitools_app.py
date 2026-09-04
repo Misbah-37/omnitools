@@ -223,7 +223,7 @@ with row3_col1:
             </div>
         </div>
         <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
-            Create, customize, and download high-quality QR codes from any URL or text.
+            Create, customize, and securely download high-quality QR codes from any URL or text.
         </div>
         """, unsafe_allow_html=True)
         st.page_link("pages/5_QR_Generator.py", label="Open QR Generator ➔", use_container_width=True)
