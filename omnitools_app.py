@@ -150,7 +150,7 @@ with row1_col1:
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/typing-test.html" target="_parent" 
+        <a href="https://misbah-37.github.io/omnitools-web/typing-test.html" target="_top" 
            style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
                   padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
                   margin-top: 10px; font-weight: 500;">
@@ -175,7 +175,7 @@ with row1_col2:
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/photo-resizer.html" target="_parent" 
+        <a href="https://misbah-37.github.io/omnitools-web/photo-resizer.html" target="_top" 
            style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
                   padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
                   margin-top: 10px; font-weight: 500;">
@@ -204,7 +204,7 @@ with row2_col1:
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/file-organizer.html" target="_parent" 
+        <a href="https://misbah-37.github.io/omnitools-web/file-organizer.html" target="_top" 
            style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
                   padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
                   margin-top: 10px; font-weight: 500;">
@@ -229,7 +229,7 @@ with row2_col2:
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/pdf-converter.html" target="_parent" 
+        <a href="https://misbah-37.github.io/omnitools-web/pdf-converter.html" target="_top" 
            style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
                   padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
                   margin-top: 10px; font-weight: 500;">
@@ -255,7 +255,7 @@ with row3_col1:
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/qr-generator.html" target="_parent" 
+        <a href="https://misbah-37.github.io/omnitools-web/qr-generator.html" target="_top" 
            style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
                   padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
                   margin-top: 10px; font-weight: 500;">
