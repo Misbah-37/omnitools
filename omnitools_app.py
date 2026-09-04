@@ -208,3 +208,10 @@ with row2_col2:
         </div>
         """, unsafe_allow_html=True)
         st.page_link("pages/4_PDF_Converter.py", label="Open PDF Converter ➔", use_container_width=True)
+
+# card 5: QR Generator
+
+with st.container():
+    st.markdown("### 📱 QR Code Generator")
+    st.write("Create, customize, and securely download high-quality QR codes from any URL or text.")
+    st.page_link("pages/5_QR_Generator.py", label="Launch Tool", use_container_width=True)
