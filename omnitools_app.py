@@ -149,7 +149,14 @@ with row1_col1:
             Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/1_Typing_Test.py", label="Launch Typing Test ➔", use_container_width=True)
+        st.markdown("""
+        <a href="https://misbah-37.github.io/omnitools-web/typing-test.html" target="_parent" 
+           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
+                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
+                  margin-top: 10px; font-weight: 500;">
+           Launch Typing Test ➔
+        </a>
+        """, unsafe_allow_html=True)
 
 # Card 2: Photo Resizer
 with row1_col2:
@@ -167,7 +174,14 @@ with row1_col2:
             Interactive image cropper and compressor to hit exact pixel dimensions and strict KB limits.
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/2_Photo_Resizer.py", label="Launch Photo Resizer ➔", use_container_width=True)
+        st.markdown("""
+        <a href="https://misbah-37.github.io/omnitools-web/photo-resizer.html" target="_parent" 
+           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
+                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
+                  margin-top: 10px; font-weight: 500;">
+           Launch Photo Resizer ➔
+        </a>
+        """, unsafe_allow_html=True)
 
 st.write("")
 
@@ -189,7 +203,14 @@ with row2_col1:
             Standalone verified desktop app to organize messy folders on your PC into 12 clean categories.
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/3_File_Organiser.py", label="Get File Organiser ➔", use_container_width=True)
+        st.markdown("""
+        <a href="https://misbah-37.github.io/omnitools-web/file-organizer.html" target="_parent" 
+           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
+                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
+                  margin-top: 10px; font-weight: 500;">
+           Get File Organiser ➔
+        </a>
+        """, unsafe_allow_html=True)
 
 # Card 4: PDF Converter
 with row2_col2:
@@ -207,7 +228,14 @@ with row2_col2:
             Merge, split, extract pages, and convert documents to and from PDF seamlessly.
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/4_PDF_Converter.py", label="Open PDF Converter ➔", use_container_width=True)
+        st.markdown("""
+        <a href="https://misbah-37.github.io/omnitools-web/pdf-converter.html" target="_parent" 
+           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
+                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
+                  margin-top: 10px; font-weight: 500;">
+           Open PDF Converter ➔
+        </a>
+        """, unsafe_allow_html=True)
         
 # Card 5:QR Generator 
 row3_col1, row3_col2 = st.columns(2)
@@ -226,4 +254,11 @@ with row3_col1:
             Create, customize, and securely download high-quality QR codes from any URL or text.
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/5_QR_Generator.py", label="Open QR Generator ➔", use_container_width=True)
+        st.markdown("""
+        <a href="https://misbah-37.github.io/omnitools-web/qr-generator.html" target="_parent" 
+           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
+                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
+                  margin-top: 10px; font-weight: 500;">
+           Open QR Generator ➔
+        </a>
+        """, unsafe_allow_html=True)
