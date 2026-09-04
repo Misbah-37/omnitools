@@ -5,9 +5,28 @@ from io import BytesIO
 st.set_page_config(page_title="QR Code Generator | OmniTools", page_icon="qr_icon.png", layout="wide")
 
 top_bar1, top_bar2 = st.columns([6, 1])
+from utils import render_icon_html
+
+top_bar1, top_bar2 = st.columns([6, 1])
 with top_bar1:
-    st.markdown("##  QR Code Generator\nGenerate and download custom QR codes instantly.")
-with top_bar2:
+    img_html = render_icon_html(
+        "qr_icon.png", 
+        "qr_icon.png", 
+        size=65, 
+        glow_color="rgba(16, 185, 129, 0.4)"
+    )
+    st.markdown(
+        f"""
+        <div style="display: flex; gap: 16px; align-items: center;">
+            {img_html}
+            <div>
+                <h2 style="margin: 0; color: #f8fafc;">QR Code Generator</h2>
+                <div style="color: #94a3b8; font-size: 0.95rem;">Generate and download custom QR codes instantly.</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.page_link("omnitools_app.py", label="🏠 Back", use_container_width=True)
 st.divider()
 
