@@ -6,7 +6,7 @@ st.set_page_config(page_title="QR Code Generator | OmniTools", page_icon="qr_ico
 
 top_bar1, top_bar2 = st.columns([6, 1])
 with top_bar1:
-    st.markdown("## 📱 QR Code Generator\nGenerate and download custom QR codes instantly.")
+    st.markdown("## "qr_icon.png" QR Code Generator\nGenerate and download custom QR codes instantly.")
 with top_bar2:
     st.page_link("omnitools_app.py", label="🏠 Back", use_container_width=True)
 st.divider()
