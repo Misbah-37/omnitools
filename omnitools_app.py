@@ -208,24 +208,18 @@ with row2_col2:
         </div>
         """, unsafe_allow_html=True)
         st.page_link("pages/4_PDF_Converter.py", label="Open PDF Converter ➔", use_container_width=True)
-
-# Create a new row if Card 4 was the last item in row 2
-row3_col1, row3_col2 = st.columns(2)
-
-# Card 5: QR Code Generator
+# Card 5:QR Generator 
 with row3_col1:
     with st.container(border=True):
         img_html = render_icon_html("qr_icon.png", "qr_icon.png", size=75, glow_color="rgba(16, 185, 129, 0.4)")
-        st.markdown(f"""
-        <div style="display: flex; gap: 16px; align-items: center;">
-            {img_html}
-            <div>
-                <h3 style="margin: 0; color: #f8fafc;">QR Code Generator</h3>
-                <div style="color: #10b981; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">DATA ENCODING</div>
-            </div>
-        </div>
-        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
-            Create, customize, and securely download high-quality QR codes from any URL or text.
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(f"""<div style="display: flex; gap: 16px; align-items: center;">
+{img_html}
+<div>
+<h3 style="margin: 0; color: #f8fafc;">QR Code Generator</h3>
+<div style="color: #10b981; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">DATA ENCODING</div>
+</div>
+</div>
+<div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
+Generate, customize, and download high-quality QR codes from any link or text.
+</div>""", unsafe_allow_html=True)
         st.page_link("pages/5_QR_Generator.py", label="Open QR Generator ➔", use_container_width=True)
