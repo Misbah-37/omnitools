@@ -13,8 +13,6 @@ try:
 except ImportError:
     PdfReader, PdfWriter = None, None
 
-import streamlit.components.v1 as components
-
 # ----------------- 1. OMNITOOLS CONFIG -----------------
 st.set_page_config(
     page_title="OmniTools | Ultimate Utility Suite", 
@@ -58,60 +56,19 @@ st.markdown("""
         gap: 6px;
         backdrop-filter: blur(8px);
     }
-    /* Dark Theme Security Certificate */
-    .cert-box {
-        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-        border: 1px solid #374151;
-        border-left: 5px solid #10b981;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-        margin-bottom: 25px;
-    }
-    .cert-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-    .cert-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #f9fafb;
-        margin: 0;
-    }
-    .cert-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 12px;
-        font-size: 0.85rem;
-        color: #9ca3af;
-        margin-top: 10px;
-        background: #0f172a;
-        border: 1px solid #1e293b;
-        padding: 14px;
-        border-radius: 8px;
-    }
-    .cert-grid strong {
-        color: #e2e8f0;
-    }
 </style>
 """, unsafe_allow_html=True)
 
 def redirect_button(url, label):
-    """Bypasses Streamlit markdown sanitization to force a top-level browser redirect."""
-    btn_html = f"""
-    <body style="margin: 0; padding: 0; background-color: transparent;">
-        <a href="{url}" target="_top" 
-           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
-                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-                  font-weight: 500; font-size: 16px; box-sizing: border-box;">
-           {label}
-        </a>
-    </body>
-    """
-    components.html(btn_html, height=45)
+    """Uses pure Streamlit markdown with inline CSS to break out securely without sandbox restrictions."""
+    st.markdown(f"""
+    <a href="{url}" target="_parent" 
+       style="display: block; width: 100%; text-align: center; background-color: #1e293b; 
+              color: #f8fafc; padding: 12px 0; border-radius: 8px; text-decoration: none; 
+              border: 1px solid #334155; margin-top: 15px; font-weight: 600; cursor: pointer;">
+       {label}
+    </a>
+    """, unsafe_allow_html=True)
 
 # =======================================================
 # ----------------- 0. LANDING PAGE (HOME) --------------
