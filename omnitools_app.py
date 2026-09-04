@@ -211,7 +211,8 @@ with row2_col2:
 
 # card 5: QR Generator
 
-with st.container():
-    st.markdown("### 📱 QR Code Generator")
-    st.write("Create, customize, and securely download high-quality QR codes from any URL or text.")
-    st.page_link("pages/5_QR_Generator.py", label="Launch Tool", use_container_width=True)
+with row3_col1:
+    with st.container(border=True):
+        st.markdown("### 📱 QR Code Generator")
+        st.write("Create, customize, and securely download high-quality QR codes from any URL or text.")
+        st.page_link("pages/5_QR_Generator.py", label="Launch Tool", use_container_width=True)
