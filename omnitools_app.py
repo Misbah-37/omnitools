@@ -98,6 +98,21 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+def redirect_button(url, label):
+    """Bypasses Streamlit markdown sanitization to force a top-level browser redirect."""
+    btn_html = f"""
+    <body style="margin: 0; padding: 0; background-color: transparent;">
+        <a href="{url}" target="_top" 
+           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
+                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                  font-weight: 500; font-size: 16px; box-sizing: border-box;">
+           {label}
+        </a>
+    </body>
+    """
+    components.html(btn_html, height=45)
+
 
 # =======================================================
 # ----------------- 0. LANDING PAGE (HOME) --------------
@@ -228,14 +243,7 @@ with row2_col2:
             Merge, split, extract pages, and convert documents to and from PDF seamlessly.
         </div>
         """, unsafe_allow_html=True)
-        st.markdown("""
-        <a href="https://misbah-37.github.io/omnitools-web/pdf-converter.html" target="_top" 
-           style="display: block; width: 100%; text-align: center; background-color: #1e293b; color: #f8fafc; 
-                  padding: 10px 0; border-radius: 8px; text-decoration: none; border: 1px solid #334155; 
-                  margin-top: 10px; font-weight: 500;">
-           Open PDF Converter ➔
-        </a>
-        """, unsafe_allow_html=True)
+        redirect_button("https://misbah-37.github.io/omnitools-web/pdf-converter.html", "Open PDF Converter ➔")
         
 # Card 5:QR Generator 
 row3_col1, row3_col2 = st.columns(2)
