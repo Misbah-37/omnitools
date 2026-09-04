@@ -2,7 +2,7 @@ import streamlit as st
 import qrcode
 from io import BytesIO
 
-st.set_page_config(page_title="QR Code Generator | OmniTools", page_icon="📱", layout="wide")
+st.set_page_config(page_title="QR Code Generator | OmniTools", page_icon="qr_icon.png", layout="wide")
 
 top_bar1, top_bar2 = st.columns([6, 1])
 with top_bar1:
