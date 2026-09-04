@@ -242,7 +242,6 @@ with row2_col2:
         <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
             Merge, split, extract pages, and convert documents to and from PDF seamlessly.
         </div>
-        """, unsafe_allow_html=True)
         redirect_button("https://misbah-37.github.io/omnitools-web/pdf-converter.html", "Open PDF Converter ➔")
         
 # Card 5:QR Generator 
