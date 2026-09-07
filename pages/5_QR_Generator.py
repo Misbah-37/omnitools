@@ -1,4 +1,13 @@
 import streamlit as st
+st.markdown("""
+<style>
+    /* Completely kill the Streamlit sidebar and top header */
+    [data-testid="stSidebar"] { display: none !important; }
+    section[data-testid="stSidebar"] { display: none !important; }
+    button[kind="header"] { display: none !important; }
+    header { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
 import qrcode
 from io import BytesIO
 
@@ -27,8 +36,6 @@ with top_bar1:
         """,
         unsafe_allow_html=True,
     )
-    st.page_link("omnitools_app.py", label="🏠 Back", use_container_width=True)
-st.divider()
 
 col1, col2 = st.columns([1.2, 1])
 with col1:
