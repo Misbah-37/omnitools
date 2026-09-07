@@ -43,38 +43,12 @@ shared_css = """
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: transparent; color: #f3f4f6; display: flex; justify-content: center; padding: 0.5rem; margin: 0; }
     .tool-container { background: #111827; border: 1px solid #374151; padding: 1.5rem; border-radius: 12px; width: 100%; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; color: #9ca3af; }
-    <!-- Instruction Text -->
-<p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 12px;">
-  <em>Tip: Hold <strong>Ctrl</strong> (Windows) or <strong>Cmd</strong> (Mac) and click to select multiple files at the same time. Drag files to reorder them.</em>
-</p>
-
-<!-- File Uploader -->
-<input type="file" id="pdf-uploader" multiple accept=".pdf" class="file-input">
-
-<!-- Empty List for Cards -->
-<ul id="sortable-file-list" style="list-style: none; padding: 0; margin-top: 16px;"></ul>
-
-<!-- Drag and Drop Paint (CSS) -->
-<style>
-  .sortable-item {
-    background-color: #1e293b;
-    border: 1px solid #334155;
-    padding: 12px 16px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    color: #f8fafc;
-    cursor: grab;
-    display: flex;
-    align-items: center;
-    transition: transform 0.2s, background-color 0.2s;
-  }
-  .sortable-item:active {
-    cursor: grabbing;
-    background-color: #334155;
-  }
-  .sortable-item.dragging {
-    opacity: 0.5;
-  }
+    input[type="file"], input[type="text"], select { width: 100%; padding: 0.6rem; background: #1f2937; color: #fff; border: 1px solid #374151; border-radius: 6px; box-sizing: border-box; margin-bottom: 1rem; }
+    button { background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%); color: white; border: none; padding: 0.8rem; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+    button:hover { opacity: 0.9; }
+    #status { text-align: center; margin-top: 1rem; font-size: 0.95rem; font-weight: 600; color: #9ca3af; }
+    .download-btn { display: none; background: #10b981; text-align: center; text-decoration: none; padding: 0.8rem; border-radius: 6px; color: white; font-weight: bold; margin-top: 1rem; }
+    .download-btn:hover { background: #059669; }
 </style>
 """
 
