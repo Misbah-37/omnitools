@@ -2,6 +2,15 @@
 # ----------------- 4. PDF CONVERTER SUITE --------------
 # =======================================================
 import streamlit as st
+st.markdown("""
+<style>
+    /* Completely kill the Streamlit sidebar and top header */
+    [data-testid="stSidebar"] { display: none !important; }
+    section[data-testid="stSidebar"] { display: none !important; }
+    button[kind="header"] { display: none !important; }
+    header { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
 import streamlit.components.v1 as components
 from utils import render_icon_html
 # --- SEO METADATA ---
@@ -24,8 +33,7 @@ with top_bar1:
         </div>
     </div>
     """, unsafe_allow_html=True)
-with top_bar2:
-  st.page_link("omnitools_app.py", label="🏠 Back", use_container_width=True)
+
 
 st.divider()
 
