@@ -1,200 +1,25 @@
 import streamlit as st
-import random
-import time
-import string
-import json
-import io
-import os
-import base64
-from utils import find_image, render_icon_html
-from PIL import Image, ImageOps
-try:
-    from pypdf import PdfReader, PdfWriter
-except ImportError:
-    PdfReader, PdfWriter = None, None
 
-# ----------------- 1. OMNITOOLS CONFIG -----------------
+# 1. Core Config
 st.set_page_config(
-    page_title="OmniTools | Ultimate Utility Suite", 
-    page_icon="🛠️", 
+    page_title="OmniTools | Backend Engine", 
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS: Dark Theme, Glass Cards & Crisp Icons
+# 2. Universal Sidebar & Header Erasure
 st.markdown("""
 <style>
-    /* Hide sidebar completely */
+    /* Completely kill the Streamlit sidebar and top header */
     [data-testid="stSidebar"] { display: none !important; }
     section[data-testid="stSidebar"] { display: none !important; }
     button[kind="header"] { display: none !important; }
-    
-    /* Smooth Crisp Image Rendering */
-    img {
-        border-radius: 16px;
-        image-rendering: -webkit-optimize-contrast;
-    }
-    
-    /* Dark Theme Trust Badges */
-    .trust-badge-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
-        margin: 15px 0 25px 0;
-    }
-    .trust-badge {
-        background: rgba(16, 185, 129, 0.1);
-        border: 1px solid rgba(52, 211, 153, 0.4);
-        color: #34d399;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        backdrop-filter: blur(8px);
-    }
+    header { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
-def redirect_button(url, label):
-    """Uses pure Streamlit markdown with inline CSS to break out securely without sandbox restrictions."""
-    st.markdown(f"""
-    <a href="{url}" target="_parent" 
-       style="display: block; width: 100%; text-align: center; background-color: #1e293b; 
-              color: #f8fafc; padding: 12px 0; border-radius: 8px; text-decoration: none; 
-              border: 1px solid #334155; margin-top: 15px; font-weight: 600; cursor: pointer;">
-       {label}
-    </a>
-    """, unsafe_allow_html=True)
-
-# =======================================================
-# ----------------- 0. LANDING PAGE (HOME) --------------
-# =======================================================
-
-master_path = find_image("omnitools_logo.png", "omnitools_master_logo_1788371563646.jpg")
-master_logo_html = ""
-if master_path:
-    with open(master_path, "rb") as f:
-        b64_logo = base64.b64encode(f.read()).decode()
-        mime = "image/png" if master_path.endswith(".png") else "image/jpeg"
-        master_logo_html = f"<img src='data:{mime};base64,{b64_logo}' style='width: 175px; filter: drop-shadow(0 12px 28px rgba(0, 210, 255, 0.45)); margin-bottom: 15px;' />"
-
-st.markdown(f"""
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-top: 10px; margin-bottom: 20px;">
-    {master_logo_html}
-    <h1 style="margin: 0; font-size: 2.8rem; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px;">OmniTools 🌌</h1>
-    <p style="color: #94a3b8; font-size: 1.15rem; max-width: 600px; margin-top: 8px; margin-bottom: 0;">High-performance, private, and lightweight utility tools for your daily workflows.</p>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<div class="trust-badge-container">
-    <span class="trust-badge">⚡ Ultra Fast Execution</span>
-    <span class="trust-badge">🔒 100% Privacy Focused</span>
-    <span class="trust-badge">💻 Modern Dark Mode Suite</span>
-    <span class="trust-badge">🚀 Zero Installation Required</span>
-</div>
-""", unsafe_allow_html=True)
-
-st.divider()
-
-# 2x2 Grid of Floating Crystal Cards
-row1_col1, row1_col2 = st.columns(2, gap="large")
-
-# Card 1: Typing Test
-with row1_col1:
-    with st.container(border=True):
-        img_html = render_icon_html("typing_icon.png", "typing_speed_icon_1788371582708.jpg", size=75, glow_color="rgba(255, 51, 153, 0.4)")
-        st.markdown(f"""
-        <div style="display: flex; gap: 16px; align-items: center;">
-            {img_html}
-            <div>
-                <h3 style="margin: 0; color: #f8fafc;">Typing Speed Test</h3>
-                <div style="color: #ff3399; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">SPEED & ACCURACY BENCHMARK</div>
-            </div>
-        </div>
-        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
-            Measure keystroke speed and accuracy across 4 difficulty tiers including 30 curated paragraphs.
-        </div>
-        """, unsafe_allow_html=True)
-        redirect_button("https://misbah-37.github.io/omnitools-web/typing-test.html", "Launch Typing Test ➔")
-
-# Card 2: Photo Resizer
-with row1_col2:
-    with st.container(border=True):
-        img_html = render_icon_html("photo_icon.png", "photo_resizer_icon_1788371609489.jpg", size=75, glow_color="rgba(0, 210, 255, 0.4)")
-        st.markdown(f"""
-        <div style="display: flex; gap: 16px; align-items: center;">
-            {img_html}
-            <div>
-                <h3 style="margin: 0; color: #f8fafc;">Photo Resizer</h3>
-                <div style="color: #00d2ff; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">PRECISION CROP & COMPRESS</div>
-            </div>
-        </div>
-        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
-            Interactive image cropper and compressor to hit exact pixel dimensions and strict KB limits.
-        </div>
-        """, unsafe_allow_html=True)
-        redirect_button("https://misbah-37.github.io/omnitools-web/photo-resizer.html", "Launch Photo Resizer ➔")
-
-st.write("")
-
-row2_col1, row2_col2 = st.columns(2, gap="large")
-
-# Card 3: File Organiser
-with row2_col1:
-    with st.container(border=True):
-        img_html = render_icon_html("file_icon.png", "file_organizer_icon_1788371632367.jpg", size=75, glow_color="rgba(52, 211, 153, 0.4)")
-        st.markdown(f"""
-        <div style="display: flex; gap: 16px; align-items: center;">
-            {img_html}
-            <div>
-                <h3 style="margin: 0; color: #f8fafc;">Desktop File Organiser</h3>
-                <div style="color: #34d399; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">STANDALONE WINDOWS APP</div>
-            </div>
-        </div>
-        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
-            Standalone verified desktop app to organize messy folders on your PC into 12 clean categories.
-        </div>
-        """, unsafe_allow_html=True)
-        redirect_button("https://misbah-37.github.io/omnitools-web/file-organizer.html", "Get File Organiser ➔")
-
-# Card 4: PDF Converter
-with row2_col2:
-    with st.container(border=True):
-        img_html = render_icon_html("pdf_icon.png", "pdf_converter_icon_1788371743841.jpg", size=75, glow_color="rgba(251, 146, 60, 0.4)")
-        st.markdown(f"""
-        <div style="display: flex; gap: 16px; align-items: center;">
-            {img_html}
-            <div>
-                <h3 style="margin: 0; color: #f8fafc;">PDF Converter Suite</h3>
-                <div style="color: #fb923c; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">DOCUMENT TRANSFORMATION</div>
-            </div>
-        </div>
-        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
-            Merge, split, extract pages, and convert documents to and from PDF seamlessly.
-        </div>
-        """, unsafe_allow_html=True)
-        redirect_button("https://misbah-37.github.io/omnitools-web/pdf-converter.html", "Open PDF Converter ➔")
-        
-# Card 5:QR Generator 
-row3_col1, row3_col2 = st.columns(2)
-with row3_col1:
-    with st.container(border=True):
-        img_html = render_icon_html("qr_icon.png", "qr_icon.png", size=75, glow_color="rgba(16, 185, 129, 0.4)")
-        st.markdown(f"""
-        <div style="display: flex; gap: 16px; align-items: center;">
-            {img_html}
-            <div>
-                <h3 style="margin: 0; color: #f8fafc;">QR Code Generator</h3>
-                <div style="color: #10b981; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">DATA ENCODING</div>
-            </div>
-        </div>
-        <div style="height: 48px; color: #94a3b8; font-size: 0.95rem; margin-top: 6px;">
-            Create, customize, and securely download high-quality QR codes from any URL or text.
-        </div>
-        """, unsafe_allow_html=True)
-        redirect_button("https://misbah-37.github.io/omnitools-web/qr-generator.html", "Open QR Generator ➔")
+# 3. Silent Placeholder
+st.markdown(
+    "<h3 style='text-align: center; color: #94a3b8; margin-top: 50px;'>⚙️ OmniTools Backend Engine Online</h3>", 
+    unsafe_allow_html=True
+)
