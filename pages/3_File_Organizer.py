@@ -1,5 +1,5 @@
 # =======================================================
-# ----------------- 3. FILE ORGANISER -------------------
+# ----------------- 3. FILE ORGANIZER -------------------
 # =======================================================
 import streamlit as st
 st.markdown("""
@@ -26,7 +26,7 @@ with top_bar1:
     <div style="display: flex; gap: 16px; align-items: center;">
         {img_html}
         <div>
-            <h2 style="margin: 0; color: #f8fafc;">Desktop File Organiser</h2>
+            <h2 style="margin: 0; color: #f8fafc;">Desktop File Organizer</h2>
             <div style="color: #94a3b8; font-size: 0.95rem;">A secure, standalone desktop utility to organize any folder on your computer in a single click.</div>
         </div>
     </div>
