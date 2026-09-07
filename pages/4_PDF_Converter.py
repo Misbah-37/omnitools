@@ -201,34 +201,114 @@ with tab_img2pdf:
 with tab_merge:
     merge_html = f"""
     {shared_css}
+    <style>
+        /* New styling that perfectly matches your existing dark input fields */
+        .sortable-item {{
+            background: #1f2937;
+            border: 1px solid #374151;
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+            border-radius: 6px;
+            color: #fff;
+            cursor: grab;
+            font-size: 0.9rem;
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }}
+        .sortable-item:active {{ cursor: grabbing; background: #374151; }}
+        .sortable-item.dragging {{ opacity: 0.5; }}
+        #sortable-file-list {{ padding: 0; margin: 0 0 1rem 0; }}
+    </style>
     <div class="tool-container">
         <h3 style="margin-top:0; color:#fff;">Merge Multiple PDFs</h3>
         <label>Select 2 or more PDF files (Order matters):</label>
+        
+        <!-- Added Tip Text -->
+        <p style="color: #9ca3af; font-size: 0.8rem; margin-top: -5px; margin-bottom: 10px;">
+            <em>Tip: Hold <strong>Ctrl</strong> (Windows) or <strong>Cmd</strong> (Mac) to select multiple files. Drag items below to reorder them.</em>
+        </p>
+        
         <input type="file" id="mergeInput" accept=".pdf" multiple>
+        <ul id="sortable-file-list"></ul>
+        
         <button onclick="mergePdfs()">🚀 Merge in Browser</button>
         <div id="status"></div>
         <a id="downloadBtn2" class="download-btn">⬇️ Download Merged PDF</a>
     </div>
+    
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <script>
+        // 1. The Javascript Bucket
+        let selectedFiles = [];
+        let draggedStartIndex;
+
+        const uploader = document.getElementById('mergeInput');
+        const listContainer = document.getElementById('sortable-file-list');
+
+        // 2. The Watchdog
+        uploader.addEventListener('change', function(event) {{
+            selectedFiles = Array.from(event.target.files);
+            renderSortableList();
+        }});
+
+        // 3. The Factory (Builds the list and handles dragging)
+        function renderSortableList() {{
+            listContainer.innerHTML = ''; 
+            
+            selectedFiles.forEach((file, index) => {{
+                const li = document.createElement('li');
+                li.className = 'sortable-item';
+                li.draggable = true;
+                li.setAttribute('data-index', index);
+                li.innerHTML = `📄 ${{file.name}}`;
+
+                li.addEventListener('dragstart', function(e) {{
+                    draggedStartIndex = +this.getAttribute('data-index');
+                    this.classList.add('dragging');
+                }});
+
+                li.addEventListener('dragover', function(e) {{
+                    e.preventDefault(); 
+                }});
+
+                li.addEventListener('drop', function(e) {{
+                    const dropIndex = +this.getAttribute('data-index');
+                    const draggedFile = selectedFiles.splice(draggedStartIndex, 1)[0];
+                    selectedFiles.splice(dropIndex, 0, draggedFile);
+                    renderSortableList();
+                }});
+
+                li.addEventListener('dragend', function() {{
+                    this.classList.remove('dragging');
+                }});
+
+                listContainer.appendChild(li);
+            }});
+        }}
+
+        // 4. The Merge Logic (Updated to use our new bucket)
         async function mergePdfs() {{
-            const files = document.getElementById('mergeInput').files;
             const status = document.getElementById('status');
             const btn = document.getElementById('downloadBtn2');
             
-            if (files.length < 2) {{ alert('Please select at least 2 PDF files.'); return; }}
+            // Checking the new bucket instead of the old input
+            if (selectedFiles.length < 2) {{ alert('Please select at least 2 PDF files.'); return; }}
             
             status.innerText = "⏳ Merging files locally... Please wait.";
             btn.style.display = "none";
             
             try {{
                 const mergedPdf = await PDFLib.PDFDocument.create();
-                for (let i = 0; i < files.length; i++) {{
-                    const arrayBuffer = await files[i].arrayBuffer();
+                
+                // Looping through the flexible bucket instead of the rigid vault
+                for (let i = 0; i < selectedFiles.length; i++) {{
+                    const arrayBuffer = await selectedFiles[i].arrayBuffer();
                     const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
                     const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
                     copiedPages.forEach((page) => mergedPdf.addPage(page));
                 }}
+                
                 const pdfBytes = await mergedPdf.save();
                 const blob = new Blob([pdfBytes], {{ type: 'application/pdf' }});
                 btn.href = URL.createObjectURL(blob);
@@ -243,7 +323,8 @@ with tab_merge:
         }}
     </script>
     """
-    components.html(merge_html, height=350)
+    # Increased height slightly to make room for the new list
+    components.html(merge_html, height=450)
 
 # ---------------- TAB 3: SPLIT PDF (CLIENT-SIDE) ----------------
 with tab_split:
