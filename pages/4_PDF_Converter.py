@@ -63,10 +63,36 @@ tab_img2pdf, tab_merge, tab_split, tab_extract = st.tabs([
 with tab_img2pdf:
     img2pdf_html = f"""
     {shared_css}
+    <style>
+        /* New styling that perfectly matches your existing dark input fields */
+        .sortable-item {{
+            background: #1f2937;
+            border: 1px solid #374151;
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+            border-radius: 6px;
+            color: #fff;
+            cursor: grab;
+            font-size: 0.9rem;
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }}
+        .sortable-item:active {{ cursor: grabbing; background: #374151; }}
+        .sortable-item.dragging {{ opacity: 0.5; }}
+        #sortable-image-list {{ padding: 0; margin: 0 0 1rem 0; }}
+    </style>
     <div class="tool-container">
         <h3 style="margin-top:0; color:#fff;">Images to Standardized PDF</h3>
-        <label>Select images (JPG, PNG, WebP):</label>
+        <label>Select images (JPG, PNG, WebP) (Order matters):</label>
+        
+        <!-- Added Tip Text -->
+        <p style="color: #9ca3af; font-size: 0.8rem; margin-top: -5px; margin-bottom: 10px;">
+            <em>Tip: Hold <strong>Ctrl</strong> (Windows) or <strong>Cmd</strong> (Mac) to select multiple images. Drag items below to reorder them.</em>
+        </p>
+
         <input type="file" id="imgInput" accept="image/png, image/jpeg, image/jpg, image/webp" multiple>
+        <ul id="sortable-image-list"></ul>
         
         <div style="display: flex; gap: 10px; margin-bottom: 0.5rem;">
             <div style="flex: 1;">
@@ -102,6 +128,54 @@ with tab_img2pdf:
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+        // 1. The Javascript Bucket for Images
+        let selectedFiles = [];
+        let draggedStartIndex;
+
+        const uploader = document.getElementById('imgInput');
+        const listContainer = document.getElementById('sortable-image-list');
+
+        // 2. The Watchdog
+        uploader.addEventListener('change', function(event) {{
+            selectedFiles = Array.from(event.target.files);
+            renderSortableList();
+        }});
+
+        // 3. The Factory (Builds the list and handles dragging)
+        function renderSortableList() {{
+            listContainer.innerHTML = ''; 
+            
+            selectedFiles.forEach((file, index) => {{
+                const li = document.createElement('li');
+                li.className = 'sortable-item';
+                li.draggable = true;
+                li.setAttribute('data-index', index);
+                li.innerHTML = `🖼️ ${{file.name}}`; // Using a picture icon for images
+
+                li.addEventListener('dragstart', function(e) {{
+                    draggedStartIndex = +this.getAttribute('data-index');
+                    this.classList.add('dragging');
+                }});
+
+                li.addEventListener('dragover', function(e) {{
+                    e.preventDefault(); 
+                }});
+
+                li.addEventListener('drop', function(e) {{
+                    const dropIndex = +this.getAttribute('data-index');
+                    const draggedFile = selectedFiles.splice(draggedStartIndex, 1)[0];
+                    selectedFiles.splice(dropIndex, 0, draggedFile);
+                    renderSortableList();
+                }});
+
+                li.addEventListener('dragend', function() {{
+                    this.classList.remove('dragging');
+                }});
+
+                listContainer.appendChild(li);
+            }});
+        }}
+
         const loadImage = (file) => new Promise((resolve, reject) => {{
             const reader = new FileReader();
             reader.onload = (e) => {{
@@ -114,7 +188,8 @@ with tab_img2pdf:
         }});
 
         async function convertImages() {{
-            const files = document.getElementById('imgInput').files;
+            // 4. Pointing the logic to our new flexible bucket
+            const files = selectedFiles;
             const status = document.getElementById('status');
             const btn = document.getElementById('downloadBtn');
             const pageSize = document.getElementById('pageSize').value;
@@ -195,7 +270,8 @@ with tab_img2pdf:
         }}
     </script>
     """
-    components.html(img2pdf_html, height=500)
+    # Increased the height slightly to 600 so the list doesn't get cut off
+    components.html(img2pdf_html, height=600)
 
 # ---------------- TAB 2: MERGE PDFS (CLIENT-SIDE) ----------------
 with tab_merge:
